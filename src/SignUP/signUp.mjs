@@ -1,16 +1,24 @@
+import { config } from 'dotenv';
+config();
+
 import { connect2MongoDB } from "connect2mongodb";
-import accountsModel from "../../models/accountsModel.mjs";
 import otpModel from "../../models/otpModel.mjs";
-import sgMail from "@sendgrid/mail";
 import encryptPassword from "../PasswordHashing/encryptPassword.mjs";
 import randomStringGenerator from "../randomStringGenerator.mjs";
 import sendOTPToUser from "../sendOTPToUser.mjs";
 
-import { config } from 'dotenv';
-config();
+import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS.split(',');;
+
+//! Generating A Dynamic Account Model Name If User Needs
+//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
+import dynamicAccountsModel from "../../models/accountsModel.mjs";
+var accountsModel = dynamicAccountsModel();
+if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
+    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
+}
 
 async function signup(userFullName, userName, userEmail, userPassword, userReferredBy) {
 

@@ -1,11 +1,18 @@
 import { connect2MongoDB } from "connect2mongodb";
-import accountsModel from "../models/accountsModel.mjs";
 import otpModel from "../models/otpModel.mjs";
 import sendOTPToUser from "./sendOTPToUser.mjs";
 import randomStringGenerator from "./randomStringGenerator.mjs";
 import encryptPassword from "./PasswordHashing/encryptPassword.mjs";
 import decryptPassword from "./PasswordHashing/decryptPassword.mjs";
 import settingsModel from "../models/settingsModel.mjs";
+
+//! Generating A Dynamic Account Model Name If User Needs
+//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
+import dynamicAccountsModel from "../models/accountsModel.mjs";
+var accountsModel = dynamicAccountsModel();
+if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
+    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
+}
 
 async function forgotPassword(username, OTP, newPassword) {
 

@@ -3,9 +3,6 @@ import sessionsModel from "../../models/sessionsModel.mjs";
 import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
 import fetchUserIP from "../fetchUserIP.mjs";
 
-import { config } from 'dotenv';
-config();
-
 async function sessionCheck(username, token, id) {
 
     try {
