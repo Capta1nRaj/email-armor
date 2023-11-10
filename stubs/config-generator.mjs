@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { connect2MongoDB } from 'connect2mongodb';
-import settingsModel from '../models/settingsModel.mjs'
+import settingsModel from '../models/settingsModel.ts'
 import fs from 'fs';
 
 //! Importing The HTML File
