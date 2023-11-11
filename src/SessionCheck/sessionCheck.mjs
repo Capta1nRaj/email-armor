@@ -1,7 +1,7 @@
 import { connect2MongoDB } from "connect2mongodb";
 import sessionsModel from "../../models/sessionsModel.mjs";
 import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
-import fetchUserIP from "../fetchUserIP.mjs";
+import fetchUserIP from "./utils/fetchUserIP.mjs";
 
 async function sessionCheck(username, token, id) {
 

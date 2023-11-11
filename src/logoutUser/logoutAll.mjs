@@ -1,7 +1,7 @@
 import { connect2MongoDB } from "connect2mongodb";
 import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
 import sessionsModel from "../../models/sessionsModel.mjs";
-import fetchUserIP from "../fetchUserIP.mjs";
+import fetchUserIP from "./utils/fetchUserIP.mjs";
 
 async function logoutAll(username, token, id) {
 

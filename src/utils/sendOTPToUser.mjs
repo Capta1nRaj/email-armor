@@ -3,7 +3,7 @@
 import { config } from 'dotenv';
 config();
 import sgMail from "@sendgrid/mail";
-import settingsModel from '../models/settingsModel.mjs';
+import settingsModel from '../../models/settingsModel.mjs';
 import { connect2MongoDB } from 'connect2mongodb';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 

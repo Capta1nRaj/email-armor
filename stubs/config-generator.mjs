@@ -9,7 +9,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 const currentModuleFile = fileURLToPath(import.meta.url);
-const emailTemplatePath = path.join(dirname(currentModuleFile), '../src/email-template.html');
+const emailTemplatePath = path.join(dirname(currentModuleFile), '../src/utils/email-template.html');
 const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf8');
 
 async function generateConfigFile() {

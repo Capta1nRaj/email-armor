@@ -4,8 +4,8 @@ config();
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.mjs";
 import encryptPassword from "../PasswordHashing/encryptPassword.mjs";
-import randomStringGenerator from "../randomStringGenerator.mjs";
-import sendOTPToUser from "../sendOTPToUser.mjs";
+import randomStringGenerator from "../utils/randomStringGenerator.mjs";
+import sendOTPToUser from "../utils/sendOTPToUser.mjs";
 
 import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);

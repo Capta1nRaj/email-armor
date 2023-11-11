@@ -6,9 +6,9 @@ import otpModel from "../../models/otpModel.mjs";
 import sessionsModel from "../../models/sessionsModel.mjs";
 import encryptPassword from "../PasswordHashing/encryptPassword.mjs";
 import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
-import fetchUserIP from "../fetchUserIP.mjs";
-import randomStringGenerator from "../randomStringGenerator.mjs";
-import sendOTPToUser from "../sendOTPToUser.mjs";
+import fetchUserIP from '../utils/fetchUserIP.mjs';
+import randomStringGenerator from "../utils/randomStringGenerator.mjs";
+import sendOTPToUser from "../utils/sendOTPToUser.mjs";
 
 import settingsModel from "../../models/settingsModel.mjs";
 
