@@ -47,6 +47,63 @@ const dynamicAccountsModel = (modelName = 'accounts') => {
         points: {
             type: Number,
             default: 0,
+        },
+        userRole: {
+            type: String,
+        },
+        userUniqueIdentification: {
+            type: [String],
+            default: [],
+        },
+        userBankDetails: {
+            type: [
+                {
+                    bankName: {
+                        type: String,
+                        required: true
+                    },
+                    accountNumber: {
+                        type: String,
+                        required: true
+                    },
+                    ifscCode: {
+                        type: String,
+                        required: true
+                    }
+                }
+            ],
+            default: []
+        },
+        userAddress: {
+            type: [
+                {
+                    addressLine1: {
+                        type: String,
+                        required: true
+                    },
+                    addressLine2: {
+                        type: String,
+                        required: true
+                    },
+                    landmark: {
+                        type: String,
+                        required: true
+                    },
+                    city: {
+                        type: String,
+                        required: true
+                    },
+                    country: {
+                        type: String,
+                        required: true
+                    },
+                    pincode: {
+                        type: String,
+                        required: true
+                    }
+                }
+            ],
+            default: []
         }
     }, {
         timestamps: true
