@@ -17,6 +17,9 @@ import logoutAll from "./src/logoutUser/logoutAll.mjs";
 import resendOTP from "./src/utils/resendOTP.mjs";
 import forgotPassword from "./src/utils/forgotPassword.mjs";
 
+// Only for personal or high-end user
+import addAUser from './src/AddEditUpdateAUser/addAUser.mjs'
+
 export {
     signin,
     signInVerify,
@@ -27,4 +30,5 @@ export {
     logoutAll,
     resendOTP,
     forgotPassword,
+    addAUser
 };

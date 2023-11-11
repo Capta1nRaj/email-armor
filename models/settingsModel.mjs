@@ -26,6 +26,10 @@ const SettingsSchema = new mongoose.Schema({
         type: String,
         default: "Custom-Forgot-Password-Title"
     },
+    add_a_user_mail_title: {
+        type: String,
+        default: "Add-A-User-Title"
+    },
     email_template: {
         type: String,
         default: ""

@@ -7,7 +7,7 @@ import settingsModel from '../../models/settingsModel.mjs';
 import { connect2MongoDB } from 'connect2mongodb';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-async function sendOTPToUser(username, userEmail, otp, functionPerformed) {
+async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerformed) {
 
   // Connection To MongoDB
   await connect2MongoDB();
@@ -18,18 +18,24 @@ async function sendOTPToUser(username, userEmail, otp, functionPerformed) {
   // Detecting Title Upon The Usage
   let emailTitle;
 
+  // Sending mail according to the functionPerformed parameter
+  let replacedHtml;
+
   if (functionPerformed === 'signUp') {
     emailTitle = fetchSettings.signup_mail_title;
   } else if (functionPerformed === 'signIn') {
     emailTitle = fetchSettings.signin_mail_title;
   } else if (functionPerformed === 'forgotPassword') {
     emailTitle = fetchSettings.forgot_password_mail_title;
+  } else if (functionPerformed === 'addAUser') {
+    emailTitle = fetchSettings.add_a_user_mail_title;
+
+    // Updating The Email Template With username & OTP
+    replacedHtml = await fetchSettings.email_template
+      .replaceAll('{{username}}', username.toLowerCase())
+      .replaceAll('{{OTPOrPassword}}', OTPOrPassword)
   }
 
-  // Updating The Email Template With username & OTP
-  const replacedHtml = fetchSettings.email_template
-    .replaceAll('{{username}}', username.toLowerCase())
-    .replaceAll('{{otp}}', otp)
 
   // Generating Mail Via Sendgrid
   const msg = {

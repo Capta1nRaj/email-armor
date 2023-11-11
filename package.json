@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/Capta1nRaj/email-armor#readme",
   "dependencies": {
-    "@react-email/render": "^0.0.7",
     "@sendgrid/mail": "^7.7.0",
     "connect2mongodb": "^0.4.1",
     "crypto-random-string": "^5.0.0",
@@ -28,7 +27,6 @@
     "express": "^4.18.2",
     "external-ip": "^2.3.1",
     "mongoose": "^7.6.2",
-    "nodemon": "^3.0.1",
     "randomstring": "^1.3.0"
   },
   "keywords": [
@@ -53,6 +51,7 @@
     "generating-config-json-file": "./stubs/config-generator.mjs"
   },
   "devDependencies": {
-    "eslint": "^8.53.0"
+    "eslint": "^8.53.0",
+    "nodemon": "^3.0.1"
   }
 }

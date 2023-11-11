@@ -19,6 +19,7 @@ async function generateConfigFile() {
         "SENDGRID_SIGN_UP_MAIL_TITLE": "Custom-Signup-Title",
         "SENDGRID_SIGN_IN_MAIL_TITLE": "Custom-Signin-Title",
         "SENDGRID_FORGOT_PASSWORD_MAIL_TITLE": "Custom-Forgot-Password-Title",
+        "SENDGRID_ADD_A_USER_MAIL_TITLE": "Custom-Add-A-User-Title",
         "REFERRED_POINTS": 100,
         "REFERRED_PERSON_POINTS": 50,
         "OTP_LIMITS": 3,
@@ -81,6 +82,7 @@ async function generateOrUpdatePoints() {
             signup_mail_title: userConfig.SENDGRID_SIGN_UP_MAIL_TITLE,
             signin_mail_title: userConfig.SENDGRID_SIGN_IN_MAIL_TITLE,
             forgot_password_mail_title: userConfig.SENDGRID_FORGOT_PASSWORD_MAIL_TITLE,
+            add_a_user_mail_title: userConfig.SENDGRID_ADD_A_USER_MAIL_TITLE,
             email_template: htmlTemplate
         }).save();
 
@@ -96,6 +98,7 @@ async function generateOrUpdatePoints() {
                 signup_mail_title: userConfig.SENDGRID_SIGN_UP_MAIL_TITLE,
                 signin_mail_title: userConfig.SENDGRID_SIGN_IN_MAIL_TITLE,
                 forgot_password_mail_title: userConfig.SENDGRID_FORGOT_PASSWORD_MAIL_TITLE,
+                add_a_user_mail_title: userConfig.SENDGRID_ADD_A_USER_MAIL_TITLE,
                 email_template: htmlTemplate
             },
         });
