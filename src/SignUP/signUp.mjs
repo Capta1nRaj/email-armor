@@ -10,7 +10,7 @@ import sendOTPToUser from "../utils/sendOTPToUser.mjs";
 import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS.split(',');;
+const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name

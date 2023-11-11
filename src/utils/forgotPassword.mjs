@@ -155,9 +155,9 @@ async function forgotPassword(username, OTP, newPassword) {
 
                 const encryptedPassword = await encryptPassword(newPassword)
 
-                const findAndUpdatePassword = await accountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true });
+                await accountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true });
 
-                const deleteTheOTPModel = await otpModel.findOneAndDelete({ userName: username.toLowerCase() })
+                await otpModel.findOneAndDelete({ userName: username.toLowerCase() })
 
                 return {
                     status: 200,

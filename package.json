@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "init": "npm run generate-config",
-    "generate-config": "./stubs/config-generator.mjs"
+    "generate-config": "./stubs/config-generator.mjs",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
@@ -50,5 +51,8 @@
   ],
   "bin": {
     "generating-config-json-file": "./stubs/config-generator.mjs"
+  },
+  "devDependencies": {
+    "eslint": "^8.53.0"
   }
 }

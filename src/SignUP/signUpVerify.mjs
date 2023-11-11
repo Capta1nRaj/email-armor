@@ -52,7 +52,7 @@ async function signUpVerify(username, otp) {
         if (getTheUserWhomHeGotReferred.userReferredBy.length === 0) {
 
             // It Will Simply Verify The User's Account.
-            const verifyUser = await accountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { $set: { userVerified: true }, $inc: { points: 0 } }, { new: true });
+            await accountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { $set: { userVerified: true }, $inc: { points: 0 } }, { new: true });
 
             // If User Is Referred By Someone
         } else if (getTheUserWhomHeGotReferred.userReferredBy.length !== 0) {
@@ -61,15 +61,15 @@ async function signUpVerify(username, otp) {
             const fetchSettings = await settingsModel.findOne({})
 
             // First, It Will Verify The User's Account And Assign Them The Referral Points (REFERRED_PERSON_POINTS as per JSON File)
-            const verifyUser = await accountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { $set: { userVerified: true }, $inc: { points: fetchSettings.referred_person_points } }, { new: true });
+            await accountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { $set: { userVerified: true }, $inc: { points: fetchSettings.referred_person_points } }, { new: true });
 
             // Secondly, It Will Update The Points For The User (REFERRED_POINTS As Per JSON File) Who Referred Them And Add The User's userName To The Referrer's List
             // It Will User The Referral Code To Find The User Who Referred A New User
-            var updateTheReferralPoints = await accountsModel.findOneAndUpdate({ userName: getTheUserWhomHeGotReferred.userReferredBy }, { $addToSet: { userReferrals: getTheUserWhomHeGotReferred.userName }, $inc: { points: fetchSettings.referred_points } }, { new: true });
+            await accountsModel.findOneAndUpdate({ userName: getTheUserWhomHeGotReferred.userReferredBy }, { $addToSet: { userReferrals: getTheUserWhomHeGotReferred.userName }, $inc: { points: fetchSettings.referred_points } }, { new: true });
         }
 
         // Delete The OTP From otpModel Collection
-        const deleteUserOTPDocument = await otpModel.findOneAndDelete({ userName: username.toLowerCase() })
+        await otpModel.findOneAndDelete({ userName: username.toLowerCase() })
 
         return {
             status: 202,

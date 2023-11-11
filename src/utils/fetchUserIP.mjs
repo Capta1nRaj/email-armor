@@ -9,18 +9,8 @@ const getIPAsync = util.promisify(externalIpInstance);
 
 // Fethcing User IP
 async function fetchExternalIP() {
-
-    try {
-
-        const ip = await getIPAsync();
-
-        return ip;
-
-    } catch (err) {
-
-        throw err;
-    }
-
+    const ip = await getIPAsync();
+    return ip;
 }
 
 async function fetchUserIP() {
