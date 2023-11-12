@@ -9,7 +9,7 @@ import { connect2MongoDB } from 'connect2mongodb';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerformed) {
+async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerformed, userIP) {
   console.log(username, userEmail, OTPOrPassword, functionPerformed)
   // Connection To MongoDB
   await connect2MongoDB();
@@ -33,7 +33,8 @@ async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerform
   // Update the email template with username and OTPOrPassword
   const replacedHtml = emailTemplate
     .replaceAll('{{username}}', username.toLowerCase())
-    .replaceAll('{{OTPOrPassword}}', OTPOrPassword);
+    .replaceAll('{{OTPOrPassword}}', OTPOrPassword)
+    .replaceAll('{{userIP}}', userIP);
 
   // Generate and send mail via SendGrid
   const msg = {

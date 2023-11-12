@@ -38,6 +38,9 @@ async function signin(username, userPassword) {
         };
     }
 
+    // Fetching User IP
+    const userIP = await fetchUserIP();
+
     // If User Is Not Verified, Redirect User To SignUp Page, & Ask Them To Verify First
     if (!findUserToLogin.userVerified) {
 
@@ -79,7 +82,7 @@ async function signin(username, userPassword) {
         }
 
         // Sending OTP To User Registered E-Mail
-        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signUp');
+        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signUp', userIP);
 
         return {
             status: 401,
@@ -90,9 +93,6 @@ async function signin(username, userPassword) {
 
     // If User Is Verified, Then, Decrypt The User Password
     const decryptedPassword = userPassword === await decryptPassword(findUserToLogin.userPassword);
-
-    // Fetching User IP
-    const userIP = await fetchUserIP();
 
     // Checking If userName & userPassword Are The Same As Per The Client Entered
     if (findUserToLogin.userName === username.toLowerCase() && decryptedPassword) {
@@ -118,7 +118,7 @@ async function signin(username, userPassword) {
         }).save();
 
         // Sending OTP To User Registered E-Mail
-        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signIn');
+        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signIn', userIP);
 
         return {
             status: 201,

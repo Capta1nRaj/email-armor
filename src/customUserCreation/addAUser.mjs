@@ -16,6 +16,7 @@ const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
 import dynamicAccountsModel from "../../models/accountsModel.mjs";
+import fetchUserIP from '../utils/fetchUserIP.mjs';
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
@@ -88,8 +89,11 @@ async function addAUser(userFullName, userName, userEmail) {
             userVerified: true,
         }).save();
 
+        // Fetching User IP
+        const userIP = await fetchUserIP();
+
         // Here user will get an email with the password regarding that he is added to the management.
-        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser');
+        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP);
 
         return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
 

@@ -32,6 +32,9 @@ async function resendOTP(username, functionPerformed, token, id) {
     // It Will Fetch Settings, & Get The OTP Limits Values From The DB
     const fetchSettings = await settingsModel.findOne({})
 
+    // Fetching userIP
+    const userIP = await fetchUserIP();
+
     // If New User Verification Needs To Be Done, Run This Function
     if (functionPerformed === 'newUserVerification') {
 
@@ -66,7 +69,7 @@ async function resendOTP(username, functionPerformed, token, id) {
         const findUserAndSendEmail = await accountsModel.findOne({ userName });
 
         // Sending OTP To User
-        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'signUp');
+        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'signUp', userIP);
 
         return {
             status: 201,
@@ -100,9 +103,6 @@ async function resendOTP(username, functionPerformed, token, id) {
             // Decrypting User IP
             const userIPDecrypted = await decryptPassword(findUserSessionViaID.userIP);
 
-            // Fetching userIP
-            const userIP = await fetchUserIP();
-
             if (findUserSessionViaID.userName === userName && findUserSessionViaID.token === token && userIP === userIPDecrypted) {
 
                 // Generating userOTP Of Length 6
@@ -124,7 +124,7 @@ async function resendOTP(username, functionPerformed, token, id) {
                 const findUserAndSendEmail = await accountsModel.findOne({ userName });
 
                 // Sending The OTP To The User
-                await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signIn');
+                await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signIn', userIP);
 
                 return {
                     status: 201,
@@ -189,7 +189,7 @@ async function resendOTP(username, functionPerformed, token, id) {
         const findUserAndSendEmail = await accountsModel.findOne({ userName });
 
         // Sending OTP To User
-        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'forgotPassword');
+        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'forgotPassword', userIP);
 
         return {
             status: 201,

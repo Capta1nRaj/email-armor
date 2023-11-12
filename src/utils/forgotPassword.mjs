@@ -9,6 +9,7 @@ import settingsModel from "../../models/sessionsModel.mjs";
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
 import dynamicAccountsModel from "../../models/accountsModel.mjs";
+import fetchUserIP from "./fetchUserIP.mjs";
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
@@ -26,6 +27,9 @@ async function forgotPassword(username, OTP, newPassword) {
             };
 
         }
+
+        // Fetching User IP
+        const userIP = await fetchUserIP();
 
         // Using This Case, We Are Generating OTP For User To Authenticate
         if (username.toLowerCase() !== undefined && OTP === undefined && newPassword === undefined) {
@@ -59,7 +63,7 @@ async function forgotPassword(username, OTP, newPassword) {
                     const encryptedOTP = await encryptPassword(userOTP);
 
                     // Sending OTP To The User
-                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword')
+                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP)
 
                     // Saving Details To DB
                     new otpModel({
@@ -94,7 +98,7 @@ async function forgotPassword(username, OTP, newPassword) {
                     const encryptedOTP = await encryptPassword(userOTP);
 
                     // Sending OTP To The User
-                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword')
+                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP)
 
                     // Updating The Document With New OTP Value
                     checkIfUserAlreadyRequestedForOTP.OTP = encryptedOTP;

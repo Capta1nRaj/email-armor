@@ -6,6 +6,7 @@ import otpModel from "../../models/otpModel.mjs";
 import encryptPassword from "../PasswordHashing/encryptPassword.mjs";
 import randomStringGenerator from "../utils/randomStringGenerator.mjs";
 import sendOTPToUser from "../utils/sendOTPToUser.mjs";
+import fetchUserIP from "../utils/fetchUserIP.mjs"
 
 import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -106,8 +107,11 @@ async function signup(userFullName, userName, userEmail, userPassword, userRefer
         const userOTP = await randomStringGenerator(6);
         const encryptedOTP = await encryptPassword(userOTP);
 
+        // Fetching User IP
+        const userIP = await fetchUserIP();
+
         // Send Un-Secured OTP To The User Registered E-Mail
-        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp');
+        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP);
 
         // Saving Secured OTP to DB
         await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();
