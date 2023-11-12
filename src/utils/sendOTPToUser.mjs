@@ -1,43 +1,41 @@
-// Here OTP Will Be Sent To User Registered E-Mail Will Custom Title/Format Depending Upon The Request
+// Here OTPOrPassword Will Be Sent To User Registered E-Mail Will Custom Title/Format Depending Upon The Request
 
 import { config } from 'dotenv';
 config();
-import sgMail from "@sendgrid/mail";
+
+import sgMail from '@sendgrid/mail';
 import settingsModel from '../../models/settingsModel.mjs';
 import { connect2MongoDB } from 'connect2mongodb';
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerformed) {
-
+  console.log(username, userEmail, OTPOrPassword, functionPerformed)
   // Connection To MongoDB
   await connect2MongoDB();
 
-  // It Will Fetch Settings, & Get Email Titles & Template From The DB
-  const fetchSettings = await settingsModel.findOne({})
+  // Fetch Settings, Get Email Titles & Template From The DB
+  const fetchSettings = await settingsModel.findOne({});
 
-  // Detecting Title Upon The Usage
-  let emailTitle;
+  // Determine the email title based on the action performed
+  const emailTitles = {
+    'signUp': fetchSettings.signup_mail_title,
+    'signIn': fetchSettings.signin_mail_title,
+    'forgotPassword': fetchSettings.forgot_password_mail_title,
+    'addAUser': fetchSettings.add_a_user_mail_title
+  };
 
-  // Sending mail according to the functionPerformed parameter
-  let replacedHtml;
+  const emailTitle = emailTitles[functionPerformed];
 
-  if (functionPerformed === 'signUp') {
-    emailTitle = fetchSettings.signup_mail_title;
-  } else if (functionPerformed === 'signIn') {
-    emailTitle = fetchSettings.signin_mail_title;
-  } else if (functionPerformed === 'forgotPassword') {
-    emailTitle = fetchSettings.forgot_password_mail_title;
-  } else if (functionPerformed === 'addAUser') {
-    emailTitle = fetchSettings.add_a_user_mail_title;
+  // Determine which email template to use
+  const emailTemplate = functionPerformed === 'addAUser' ? fetchSettings.add_a_user_template : fetchSettings.email_template;
 
-    //* Updating The Email Template With username & OTP or Password
-    replacedHtml = await fetchSettings.add_a_user_template
-      .replaceAll('{{username}}', username.toLowerCase())
-      .replaceAll('{{OTPOrPassword}}', OTPOrPassword)
-  }
+  // Update the email template with username and OTPOrPassword
+  const replacedHtml = emailTemplate
+    .replaceAll('{{username}}', username.toLowerCase())
+    .replaceAll('{{OTPOrPassword}}', OTPOrPassword);
 
-
-  // Generating Mail Via Sendgrid
+  // Generate and send mail via SendGrid
   const msg = {
     to: userEmail,
     from: process.env.SENDGRID_EMAIL_ID,
@@ -45,7 +43,6 @@ async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerform
     html: replacedHtml
   };
 
-  // Sending Mail Via Sendgrid
   sgMail.send(msg);
 }
 

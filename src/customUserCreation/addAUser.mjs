@@ -85,6 +85,7 @@ async function addAUser(userFullName, userName, userEmail) {
             userPassword: encryptedPassword,
             userReferralCode: userReferralCode,
             userReferredBy: "",
+            userVerified: true,
         }).save();
 
         // Here user will get an email with the password regarding that he is added to the management.
