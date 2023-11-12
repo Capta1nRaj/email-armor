@@ -33,6 +33,10 @@ const SettingsSchema = new mongoose.Schema({
     email_template: {
         type: String,
         default: ""
+    },
+    add_a_user_template: {
+        type: String,
+        default: ""
     }
 }, {
     timestamps: true
