@@ -1,4 +1,5 @@
 //! Please don't use this in your project until & unless your are making a website where admin can add users manually 
+//! It will not have any points system too
 
 import { config } from 'dotenv';
 config();
@@ -22,7 +23,8 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function addAUser(userFullName, userName, userEmail) {
+//! Here adminName means the user trying to add an employee, the name will be saved in userReferredBy
+async function addAUser(adminName, userFullName, userName, userEmail) {
 
     try {
 
@@ -75,8 +77,17 @@ async function addAUser(userFullName, userName, userEmail) {
 
         // Generating random user password which will be sent to the user via mail
         const userPassword = await generatingUserReferralCode(18);
+
         // Secure user password
         const encryptedPassword = await encryptPassword(userPassword);
+
+        // Checking if the admin exist in DB or someone trying to manipulate the data
+        const userAddedBy = await accountsModel.findOne({ userName: adminName })
+
+        // If admin not found, throw this error
+        if (userAddedBy === null) {
+            return { status: 403, message: "You are not allowed to do this." };
+        }
 
         // Save New User Details To DB
         await new accountsModel({
@@ -85,9 +96,12 @@ async function addAUser(userFullName, userName, userEmail) {
             userEmail: userEmail.toLowerCase(),
             userPassword: encryptedPassword,
             userReferralCode: userReferralCode,
-            userReferredBy: "",
+            userReferredBy: userAddedBy.userName,
             userVerified: true,
         }).save();
+
+        // Updating the admin's userReferrals field with the user's userName he added
+        await accountsModel.findOneAndUpdate({ userName: adminName }, { $addToSet: { userReferrals: userName } });
 
         // Fetching User IP
         const userIP = await fetchUserIP();
@@ -96,7 +110,6 @@ async function addAUser(userFullName, userName, userEmail) {
         await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP);
 
         return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
-
     } catch (error) {
         return { status: 500, message: "Internal Server Error" };
     }
