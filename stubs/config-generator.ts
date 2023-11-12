@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
+// @ts-ignore
 import inquirer from 'inquirer';
+// @ts-ignore
 import { connect2MongoDB } from 'connect2mongodb';
-import settingsModel from '../models/settingsModel.mjs';
+import settingsModel from '../models/settingsModel.js';
+import { URL } from 'url';
 
 //! Importing the HTML files
 const emailTemplate = fs.readFileSync(new URL('../src/emailTemplates/email-template.html', import.meta.url), 'utf8');
@@ -41,7 +44,7 @@ async function executeOperationsBasedOnConfirmation() {
     await runStepByStep();
 }
 
-async function generateFileIfNotExists(filename, content) {
+async function generateFileIfNotExists(filename: string, content: string) {
     if (!fs.existsSync(filename)) {
         fs.writeFileSync(filename, content);
         console.log(`${filename} generated successfully.`);
@@ -75,7 +78,7 @@ async function generatingAddAUserEmailTemplate() {
 
 //! Updating the points & values from .json to DB
 async function updatePoints() {
-    const userConfiJSONData = fs.readFileSync('email-armour.json');
+    const userConfiJSONData = fs.readFileSync('email-armour.json', 'utf8');
     const userConfig = JSON.parse(userConfiJSONData);
 
     //* Checking if document exist or not 
@@ -124,7 +127,7 @@ async function updateEmailTemplate() {
 async function updateAddAUserEmailTemplate() {
 
     //* Checking if file exist or not, if not create a new one, & save to DB or update the DB with the value in it 
-    const checkEmailTemplateFile = fs.existsSync('add-a-user-email-template.html', 'utf8');
+    const checkEmailTemplateFile = fs.existsSync('add-a-user-email-template.html');
 
     if (checkEmailTemplateFile === true) {
         const userEmailTemplate = fs.readFileSync('add-a-user-email-template.html', 'utf8');

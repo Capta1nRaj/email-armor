@@ -1,8 +1,9 @@
+// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
-import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
-import sessionsModel from "../../models/sessionsModel.mjs";
+import decryptPassword from "../PasswordHashing/decryptPassword.js";
+import sessionsModel from "../../models/sessionsModel.js";
 
-async function signInVerify(username, otp, id) {
+async function signInVerify(username: string, otp: string, id: string) {
 
     await connect2MongoDB();
 

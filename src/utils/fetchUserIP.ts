@@ -1,5 +1,6 @@
 // Fetching User IP Using external-ip NPM Module
 
+// @ts-ignore
 import externalIp from "external-ip";
 const externalIpInstance = externalIp();
 import util from "util";

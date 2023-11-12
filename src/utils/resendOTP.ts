@@ -1,26 +1,27 @@
 import { config } from 'dotenv';
 config();
 
+// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
-import sessionsModel from "../../models/sessionsModel.mjs";
-import otpModel from "../../models/otpModel.mjs";
+import sessionsModel from "../../models/sessionsModel.js";
+import otpModel from "../../models/otpModel.js";
 
-import sendOTPToUser from "../utils/sendOTPToUser.mjs";
-import fetchUserIP from "./fetchUserIP.mjs";
-import randomStringGenerator from "./randomStringGenerator.mjs";
-import encryptPassword from "../PasswordHashing/encryptPassword.mjs";
-import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
-import settingsModel from "../../models/settingsModel.mjs";
+import sendOTPToUser from "./sendOTPToUser.js";
+import fetchUserIP from "./fetchUserIP.js";
+import randomStringGenerator from "./randomStringGenerator.js";
+import encryptPassword from "../PasswordHashing/encryptPassword.js";
+import decryptPassword from "../PasswordHashing/decryptPassword.js";
+import settingsModel from "../../models/settingsModel.js";
 
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.mjs";
+import dynamicAccountsModel from "../../models/accountsModel.js";
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function resendOTP(username, functionPerformed, token, id) {
+async function resendOTP(username: string, functionPerformed: string, token: string, id: string) {
 
     const userName = username.toLowerCase();
 

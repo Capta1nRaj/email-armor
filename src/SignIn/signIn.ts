@@ -1,29 +1,34 @@
+// @ts-ignore
 import { config } from 'dotenv';
 config();
 
+// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
-import otpModel from "../../models/otpModel.mjs";
-import sessionsModel from "../../models/sessionsModel.mjs";
-import encryptPassword from "../PasswordHashing/encryptPassword.mjs";
-import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
-import fetchUserIP from '../utils/fetchUserIP.mjs';
-import randomStringGenerator from "../utils/randomStringGenerator.mjs";
-import sendOTPToUser from "../utils/sendOTPToUser.mjs";
+import otpModel from "../../models/otpModel.js";
+import sessionsModel from "../../models/sessionsModel.js";
+import encryptPassword from "../PasswordHashing/encryptPassword.js";
+import decryptPassword from "../PasswordHashing/decryptPassword.js";
+import fetchUserIP from '../utils/fetchUserIP.js';
+import randomStringGenerator from "../utils/randomStringGenerator.js";
+import sendOTPToUser from "../utils/sendOTPToUser.js";
 
-import settingsModel from "../../models/settingsModel.mjs";
+import settingsModel from "../../models/settingsModel.js";
 
+// @ts-ignore
 import sgMail from "@sendgrid/mail";
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.mjs";
+import dynamicAccountsModel from "../../models/accountsModel.js";
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function signin(username, userPassword) {
+async function signin(username: string, userPassword: string | boolean) {
 
     await connect2MongoDB();
 

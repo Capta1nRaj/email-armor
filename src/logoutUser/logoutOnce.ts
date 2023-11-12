@@ -1,9 +1,10 @@
+// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
-import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
-import sessionsModel from "../../models/sessionsModel.mjs";
-import fetchUserIP from "../utils/fetchUserIP.mjs";
+import decryptPassword from "../PasswordHashing/decryptPassword.js";
+import sessionsModel from "../../models/sessionsModel.js";
+import fetchUserIP from "../utils/fetchUserIP.js";
 
-async function logoutAll(username, token, id) {
+async function logoutOnce(username: string, token: any, id: any) {
 
     await connect2MongoDB();
 
@@ -26,12 +27,12 @@ async function logoutAll(username, token, id) {
         // Fetching User IP
         const userIP = await fetchUserIP();
 
-        // If Current Session Exist In DB, Then, Delte All The Sessions Which Have The username In It
+        // If Current Session Exist In DB, Then, Delete That Specific Session
         if (findUserSession.userName === username.toLowerCase() && findUserSession.token === token && userIPDecrypted === userIP) {
-            await sessionsModel.deleteMany({ userName: username.toLowerCase() });
+            await sessionsModel.findByIdAndDelete(id);
             return {
                 status: 200,
-                message: "All Of The User's Session Deleted.",
+                message: "User Session Deleted.",
             };
         }
 
@@ -42,14 +43,11 @@ async function logoutAll(username, token, id) {
         };
 
     } catch (error) {
-
         return {
             status: 400,
             message: "Data Not Valid.",
         };
-
     }
-
 }
 
-export default logoutAll;
+export default logoutOnce;

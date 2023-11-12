@@ -6,15 +6,15 @@ const secret_iv = process.env.SECRET_IV;
 const encryptionMethod = 'AES-256-CBC';
 
 // Checing The Lengths Of secret_key and secret_iv
-if (secret_key.length < 32 || secret_iv.length < 32) {
+if ((secret_key && secret_key.length < 32) || (secret_iv && secret_iv.length < 32)) {
     console.log("Make Sure Your secret_key & secret_iv Length Must Be 32 Or Greater.");
     // return false;
 }
 
-const key = crypto.createHash('sha512').update(secret_key, 'utf-8').digest('hex').slice(0, 32);
-const iv = crypto.createHash('sha512').update(secret_iv, 'utf-8').digest('hex').slice(0, 16);
+var key = crypto.createHash('sha512').update(secret_key as string, 'utf-8').digest('hex').slice(0, 32);
+var iv = crypto.createHash('sha512').update(secret_iv as string, 'utf-8').digest('hex').slice(0, 16);
 
-async function encryptPassword(password) {
+async function encryptPassword(password: string) {
     try {
         const encryptor = crypto.createCipheriv(encryptionMethod, key, iv);
         const aes_encrypted = encryptor.update(password, 'utf-8', 'base64') + encryptor.final('base64');

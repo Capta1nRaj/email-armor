@@ -1,9 +1,10 @@
+// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
-import sessionsModel from "../../models/sessionsModel.mjs";
-import decryptPassword from "../PasswordHashing/decryptPassword.mjs";
-import fetchUserIP from "../utils/fetchUserIP.mjs";
+import sessionsModel from "../../models/sessionsModel.js";
+import decryptPassword from "../PasswordHashing/decryptPassword.js";
+import fetchUserIP from "../utils/fetchUserIP.js";
 
-async function sessionCheck(username, token, id) {
+async function sessionCheck(username: string, token: string, id: string) {
 
     try {
 

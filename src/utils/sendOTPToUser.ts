@@ -1,24 +1,36 @@
-// Here OTPOrPassword Will Be Sent To User Registered E-Mail Will Custom Title/Format Depending Upon The Request
-
+// Import necessary modules and set up environment variables
 import { config } from 'dotenv';
 config();
 
 import sgMail from '@sendgrid/mail';
-import settingsModel from '../../models/settingsModel.mjs';
+import settingsModel from '../../models/settingsModel.js';
+// @ts-ignore
 import { connect2MongoDB } from 'connect2mongodb';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Check if SENDGRID_API_KEY is defined
+if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_EMAIL_ID) {
+  throw new Error("SENDGRID_API_KEY or SENDGRID_EMAIL_ID is not defined in your environment variables.");
+}
 
-async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerformed, userIP) {
-  console.log(username, userEmail, OTPOrPassword, functionPerformed)
-  // Connection To MongoDB
+// Define type for email titles
+type EmailTitles = {
+  signUp: string;
+  signIn: string;
+  forgotPassword: string;
+  addAUser: string;
+};
+
+async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword: any, functionPerformed: keyof EmailTitles, userIP: any) {
+  console.log(username, userEmail, OTPOrPassword, functionPerformed);
+
+  // Connection to MongoDB
   await connect2MongoDB();
 
   // Fetch Settings, Get Email Titles & Template From The DB
   const fetchSettings = await settingsModel.findOne({});
 
-  // Determine the email title based on the action performed
-  const emailTitles = {
+  // Determine the email titles based on the action performed
+  const emailTitles: EmailTitles = {
     'signUp': fetchSettings.signup_mail_title,
     'signIn': fetchSettings.signin_mail_title,
     'forgotPassword': fetchSettings.forgot_password_mail_title,
@@ -39,12 +51,12 @@ async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerform
   // Generate and send mail via SendGrid
   const msg = {
     to: userEmail,
-    from: process.env.SENDGRID_EMAIL_ID,
+    from: process.env.SENDGRID_EMAIL_ID as string,
     subject: emailTitle,
     html: replacedHtml
   };
 
-  sgMail.send(msg);
+  await sgMail.send(msg);
 }
 
 export default sendOTPToUser;
