@@ -18,7 +18,7 @@ import resendOTP from "./src/utils/resendOTP.mjs";
 import forgotPassword from "./src/utils/forgotPassword.mjs";
 
 // Only for personal or high-end user
-import addAUser from './src/AddEditUpdateAUser/addAUser.mjs'
+import addAUser from './src/customUserCreation/addAUser.mjs'
 
 export {
     signin,

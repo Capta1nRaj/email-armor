@@ -30,8 +30,8 @@ async function sendOTPToUser(username, userEmail, OTPOrPassword, functionPerform
   } else if (functionPerformed === 'addAUser') {
     emailTitle = fetchSettings.add_a_user_mail_title;
 
-    // Updating The Email Template With username & OTP or Password
-    replacedHtml = await fetchSettings.email_template
+    //* Updating The Email Template With username & OTP or Password
+    replacedHtml = await fetchSettings.add_a_user_template
       .replaceAll('{{username}}', username.toLowerCase())
       .replaceAll('{{OTPOrPassword}}', OTPOrPassword)
   }
