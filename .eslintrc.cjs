@@ -22,7 +22,7 @@ module.exports = {
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "ignorePatterns": ["node_modules", "test"],
+    "ignorePatterns": ["node_modules", "test", 'dist'],
     "rules": {
     }
 }

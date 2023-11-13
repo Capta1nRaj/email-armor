@@ -14,7 +14,6 @@ import sendOTPToUser from "../utils/sendOTPToUser.js";
 
 import settingsModel from "../../models/settingsModel.js";
 
-// @ts-ignore
 import sgMail from "@sendgrid/mail";
 if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);

@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "NodeNext", // Change this to "NodeNext"
-    "moduleResolution": "NodeNext", // Change this to "NodeNext"
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "strict": true,
-    "outDir": "./dist",
+    "outDir": "./lib",
     "esModuleInterop": true
   },
   "include": ["**/*.ts"],

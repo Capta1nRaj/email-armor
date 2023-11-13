@@ -2,14 +2,16 @@
   "name": "email-armor",
   "version": "0.0.2-beta.0",
   "description": "Custom email and password authentication with two-step verification via SendGrid.",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "type": "module",
   "scripts": {
     "init": "npm run generate-config",
-    "generate-config": "./dist/stubs/config-generator.js",
+    "generate-config": "./lib/stubs/config-generator.js",
+    "clean": "rimraf lib/",
+    "copy-files": "copyfiles -u 1 src/**/*.html lib/src",
     "lint": "npx eslint .",
     "build": "tsc",
-    "start": "npm run build && node dist/index.js"
+    "start": "npm run clean && npm rum lint && npm run build && node lib/index.js && npm run copy-files"
   },
   "repository": {
     "type": "git",
@@ -53,12 +55,14 @@
     "email-armor"
   ],
   "bin": {
-    "generating-config-json-file": "./dist/stubs/config-generator.js"
+    "generating-config-json-file": "./lib/stubs/config-generator.js"
   },
   "devDependencies": {
     "@types/randomstring": "^1.1.11",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.53.0",
     "nodemon": "^3.0.1",
+    "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   }
 }
