@@ -1,29 +1,31 @@
-<!-- <p align="center">
-  <a href="https://github.com/Capta1nRaj/mail-passify" target="_blank"><img width="200px" src="https://github.com/Capta1nRaj/mail-passify/assets/101660221/91b0dd5c-a57b-4959-b9da-863e845ac820" /></a>
+<p align="center">
+  <a href="https://github.com/Capta1nRaj/email-armor" target="_blank"><img width="200px" src="https://github.com/Capta1nRaj/mail-passify/assets/101660221/91b0dd5c-a57b-4959-b9da-863e845ac820" /></a>
   <h3 align="center">Email Armor</h3>
   <p align="center" style="align: center;">
-      <a href="https://github.com/Capta1nRaj/mail-passify/stargazers">
-         <img src="https://img.shields.io/github/stars/Capta1nRaj/mail-passify" alt="Github Stars" />
+      <a href="https://github.com/Capta1nRaj/email-armor/stargazers">
+         <img src="https://img.shields.io/github/stars/Capta1nRaj/email-armor" alt="Github Stars" />
       </a>
-      <a href="https://github.com/Capta1nRaj/mail-passify/blob/main/LICENSE">
-         <img src="https://img.shields.io/github/license/Capta1nRaj/mail-passify" alt="Licence" />
+      <a href="https://github.com/Capta1nRaj/email-armor/blob/main/LICENSE">
+         <img src="https://img.shields.io/github/license/Capta1nRaj/email-armor" alt="Licence" />
       </a>
-      <a href="https://www.npmtrends.com/mail-passify">
-         <img src="https://img.shields.io/npm/dm/mail-passify" alt="Downloads" />
+      <a href="https://www.npmtrends.com/email-armor">
+         <img src="https://img.shields.io/npm/dm/email-armor" alt="Downloads" />
       </a>
-      <a href="https://bundlephobia.com/package/mail-passify@3.0.0">
-         <img src="https://img.shields.io/bundlephobia/min/mail-passify/3.0.0" alt="Size" />
+      <a href="https://bundlephobia.com/package/email-armor@0.0.1-beta.0">
+         <img src="https://img.shields.io/bundlephobia/min/email-armor/0.0.1-beta.0" alt="Size" />
       </a>
    </p>
 </p>
- -->
+
 # What Is Email Armor?
+
+**Note:-** Currently, this is under development, so please check beta versions for the latest updates, or refer to latest documentation on [email-armor-github-repo](https://github.com/Capta1nRaj/email-armor.git).
 
 **Note:-** Please refer to the documentation on my GitHub repository in case I missed or inaccurately mentioned something here. Documentation for [beta-0.0.2](https://github.com/Capta1nRaj/email-armor.git).
 
 <!-- ## Demo Link:- -->
 
-<!-- To test a demo before using in your main project, visit here and read the README before starting:- [https://github.com/Capta1nRaj/mail-passify-demo/tree/v3.1](https://github.com/Capta1nRaj/mail-passify-demo/tree/v3.1) -->
+<!-- To test a demo before using in your main project, visit here and read the README before starting:- [https://github.com/Capta1nRaj/email-armor-demo/tree/v3.1](https://github.com/Capta1nRaj/email-armor-demo/tree/v3.1) -->
 
 ## # Overview
 
@@ -61,7 +63,7 @@ Email Armor is a Node.js module that empowers you to create a robust user **sign
 In back-end/front-end, depends on your use, install **mail-paasify**:-
 
 ```js
-npm i mail-passify
+npm i email-armor
 ```
 
 Whereas, in front-end, for fetching cookies, install **cookies-next**:-
@@ -85,10 +87,10 @@ ALLOWED_EMAIL_DOMAINS=@gmail.com,@hotmail.com {YOU_CAN_ADD_MORE_BY_SEPERATING_WI
 3. Generate the configuration file in server by using the command:-
 
 ```js
-npx mail-passify init
+npx email-armor init
 ```
 
-4. This will generate 2 files ``mail-passify.json`` & ``email-template.html`` files. In ``mail-passify.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.
+4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.
 
    | Name                                | Type    | Usage                                  |
    | ----------------------------------- | ------- | -------------------------------------- |
@@ -102,7 +104,7 @@ npx mail-passify init
 5. Once you update these values, again run this command to update your referral points values in your MongoDB database:-
 
 ```js
-npx mail-passify init
+npx email-armor init
 ```
 
 ## # Usage
@@ -120,7 +122,7 @@ const response = await axios.post('YOUR_URL', data);
 Next, configure the sign-up module on the Back-End:-
 
 ```js
-import signup from "mail-passify";
+import signup from "email-armor";
 const response = await signup(fullName, userName, emailID, password, referralCode);
 console.log(response);
 ```
@@ -158,7 +160,7 @@ const response = await axios.post('YOUR_URL', data);
 Set up the sign-up verify module in Back-End. Make sure to fetch userName from **cookies** as we stored it above.
 
 ```js
-import { signUpVerify } from "mail-passify";
+import { signUpVerify } from "email-armor";
 const response = await signUpVerify(userNameCookie, OTP);
 console.log(response);
 ```
@@ -185,7 +187,7 @@ const response = await axios.post('YOUR_URL', data);
 Next, configure the sign-in module on the Back-End:-
 
 ```js
-import { signin } from "mail-passify";
+import { signin } from "email-armor";
 const response = await signin(userName, userPassword)
 console.log(response);
 ```
@@ -236,7 +238,7 @@ const response = await axios.post('YOUR_URL', data)
 Once the data is sent to the Back-End, use this method to verify the user:-
 
 ```js
-import { signInVerify } from "mail-passify";
+import { signInVerify } from "email-armor";
 const response = await signInVerify(userNameCookie, OTP, userId);
 console.log(response);
 ```
@@ -255,7 +257,7 @@ return {
 What if the user's session has expired, and they are still logged in, or if they attempt to manipulate cookies and perform unauthorized actions? You know that's not good, right? So, use the `sessionCheck()` function to verify if the user's session is legitimate and active. Follow these steps:-
 
 ```js
-import { sessionCheck } from "mail-passify";
+import { sessionCheck } from "email-armor";
 const userNameCookie = getCookie('userName');
 const userTokenCookie = getCookie('userToken');
 const userIdCookie = getCookie('userId');
@@ -304,7 +306,7 @@ const response = await axios.post('YOUR_URL', data);
 Once the data is passed to the Back-End, use the **logoutOnce** function to remove the session from MongoDB, like this:-
 
 ```js
-import { logoutOnce } from "mail-passify";
+import { logoutOnce } from "email-armor";
 const response = await logoutOnce(userNameCookie, userTokenCookie, userId)
 ```
 
@@ -330,7 +332,7 @@ deleteCookie('userTokenCookie');
 All steps are the same as we did above in **Method 1**, just in the Back-End, you need to change the imports like this:-
 
 ```js
-import { logoutAll } from "mail-passify";
+import { logoutAll } from "email-armor";
 const response = await logoutAll(userNameCookie, userTokenCookie, userIdCookie)
 ```
 
@@ -346,7 +348,7 @@ const response = await axios.post('YOUR_URL', data)
 Once the data is passed to the Back-End, use the **forgotPassword** function to reset/update the password in MongoDB like this:-
 
 ```js
-import { forgotPassword } from "mail-passify";
+import { forgotPassword } from "email-armor";
 const response = await forgotPassword(userName);
 ```
 
