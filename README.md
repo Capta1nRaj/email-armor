@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/Capta1nRaj/email-armor" target="_blank"><img width="200px" src="https://github.com/Capta1nRaj/mail-passify/assets/101660221/91b0dd5c-a57b-4959-b9da-863e845ac820" /></a>
+  <a href="https://github.com/Capta1nRaj/email-armor" target="_blank"><img width="200px" src="https://github.com/Capta1nRaj/email-armor/blob/main/email-armor.png?raw=true" /></a>
   <h3 align="center">Email Armor</h3>
   <p align="center" style="align: center;">
       <a href="https://github.com/Capta1nRaj/email-armor/stargazers">
@@ -31,7 +31,7 @@
 
 Email Armor is a Node.js module that empowers you to create a robust user **sign-up** and **sign-in** system with **two-step verification** using **SendGrid**(freemium). It's also equipped with a **built-in referral system** to enhance user engagement and growth. **Note:-** It only supports MongoDB as database for now.
 
-## # Features In v3.1
+## # Features In v1
 
 - ✅ [Compatible with Next.js.](https://nextjs.org/)
 - ✅ [Custom Mail Template*](https://github.com/Capta1nRaj/email-armor.git#9-custom-email-template-)
