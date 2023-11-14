@@ -4,7 +4,6 @@ config();
 
 import sgMail from '@sendgrid/mail';
 import settingsModel from '../../models/settingsModel.js';
-// @ts-ignore
 import { connect2MongoDB } from 'connect2mongodb';
 
 // Check if SENDGRID_API_KEY is defined
@@ -21,7 +20,6 @@ type EmailTitles = {
 };
 
 async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword: any, functionPerformed: keyof EmailTitles, userIP: any) {
-  console.log(username, userEmail, OTPOrPassword, functionPerformed);
 
   // Connection to MongoDB
   await connect2MongoDB();

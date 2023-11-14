@@ -5,7 +5,6 @@
 import { config } from 'dotenv';
 config();
 
-// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
 import encryptPassword from "../PasswordHashing/encryptPassword.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";

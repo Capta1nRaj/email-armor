@@ -1,4 +1,3 @@
-// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
 import sendOTPToUser from "./sendOTPToUser.js";

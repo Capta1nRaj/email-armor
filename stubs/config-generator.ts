@@ -3,7 +3,7 @@
 import fs from 'fs';
 // @ts-ignore
 import inquirer from 'inquirer';
-// @ts-ignore
+
 import { connect2MongoDB } from 'connect2mongodb';
 import settingsModel from '../models/settingsModel.js';
 import { URL } from 'url';

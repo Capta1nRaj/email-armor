@@ -1,7 +1,6 @@
 import { config } from 'dotenv';
 config();
 
-// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
 import sessionsModel from "../../models/sessionsModel.js";
 import otpModel from "../../models/otpModel.js";
