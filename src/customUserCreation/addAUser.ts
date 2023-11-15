@@ -26,7 +26,7 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
 }
 
 //! Here adminName means the user trying to add an employee, the name will be saved in userReferredBy
-async function addAUser(adminName: any, userFullName: string, userName: string, userEmail: string) {
+async function addAUser(adminName: any, userFullName: string, userName: string, userEmail: string, userRole:string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[]) {
 
     try {
 
@@ -100,6 +100,15 @@ async function addAUser(adminName: any, userFullName: string, userName: string, 
             userReferralCode: userReferralCode,
             userReferredBy: userAddedBy.userName,
             userVerified: true,
+            userBankDetails: [
+                {
+                    bankName: userBankName || "",
+                    accountNumber: userAccountNumber || "",
+                    ifscCode: userIFSCCode || ""
+                }
+            ],
+            userUniqueIdentification: uniqueIdentifiers || [],
+            userRole: userRole || ""
         }).save();
 
         // Updating the admin's userReferrals field with the user's userName he added

@@ -60,15 +60,12 @@ const dynamicAccountsModel = (modelName = 'accounts') => {
                 {
                     bankName: {
                         type: String,
-                        required: true
                     },
                     accountNumber: {
                         type: String,
-                        required: true
                     },
                     ifscCode: {
                         type: String,
-                        required: true
                     }
                 }
             ],
@@ -78,28 +75,22 @@ const dynamicAccountsModel = (modelName = 'accounts') => {
             type: [
                 {
                     addressLine1: {
-                        type: String,
-                        required: true
+                        type: String
                     },
                     addressLine2: {
-                        type: String,
-                        required: true
+                        type: String
                     },
                     landmark: {
-                        type: String,
-                        required: true
+                        type: String
                     },
                     city: {
-                        type: String,
-                        required: true
+                        type: String
                     },
                     country: {
-                        type: String,
-                        required: true
+                        type: String
                     },
                     pincode: {
-                        type: String,
-                        required: true
+                        type: String
                     }
                 }
             ],
