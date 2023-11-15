@@ -1,6 +1,5 @@
 // Generating Random String Using randomString Module
 
-// @ts-ignore
 import randomstring from "randomstring";
 
 async function randomStringGenerator(length: number) {

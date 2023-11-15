@@ -1,7 +1,6 @@
 import { config } from 'dotenv';
 config();
 
-// @ts-ignore
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
 import encryptPassword from "../PasswordHashing/encryptPassword.js";
@@ -9,7 +8,6 @@ import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import fetchUserIP from "../utils/fetchUserIP.js"
 
-// @ts-ignore
 import sgMail from "@sendgrid/mail";
 if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);

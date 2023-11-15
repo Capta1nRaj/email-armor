@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-// @ts-ignore
 import inquirer from 'inquirer';
 
 import { connect2MongoDB } from 'connect2mongodb';

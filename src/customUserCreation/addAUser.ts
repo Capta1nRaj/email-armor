@@ -1,7 +1,6 @@
 //! Please don't use this in your project until & unless your are making a website where admin can add users manually 
 //! It will not have any points system too
 
-// @ts-ignore
 import { config } from 'dotenv';
 config();
 
@@ -10,7 +9,6 @@ import encryptPassword from "../PasswordHashing/encryptPassword.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 
-// @ts-ignore
 import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
@@ -25,7 +23,7 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-//! Here adminName means the user trying to add an employee, the name will be saved in userReferredBy
+//! Here adminName means the user trying to add an employee, & the name will be saved in userReferredBy
 async function addAUser(adminName: any, userFullName: string, userName: string, userEmail: string, userRole:string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[]) {
 
     try {
