@@ -12,19 +12,20 @@ import sendOTPToUser from "../utils/sendOTPToUser.js";
 import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
+import fetchUserIP from '../utils/fetchUserIP.js';
+
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
 import dynamicAccountsModel from "../../models/accountsModel.js";
-import fetchUserIP from '../utils/fetchUserIP.js';
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
 //! Here adminName means the user trying to add an employee, & the name will be saved in userReferredBy
-async function addAUser(adminName: any, userFullName: string, userName: string, userEmail: string, userRole:string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[]) {
+async function customAddAUser(adminName: any, userFullName: string, userName: string, userEmail: string, userRole:string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[]) {
 
     try {
 
@@ -139,4 +140,4 @@ async function generatingUserReferralCode(number: number) {
     return userReferralCode;
 }
 
-export default addAUser;
+export default customAddAUser;

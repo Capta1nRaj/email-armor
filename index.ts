@@ -17,8 +17,9 @@ import logoutAll from "./src/logoutUser/logoutAll.js";
 import resendOTP from "./src/utils/resendOTP.js";
 import forgotPassword from "./src/utils/forgotPassword.js";
 
-// Only for personal or high-end user
-import addAUser from './src/customUserCreation/addAUser.js'
+// Only for personal or high-end user (use this if making any admin panel type websites)
+import customAddAUser from './src/customUserCreation/customAddAUser.js'
+import customDeleteAUser from './src/customUserCreation/customDeleteAUser.js'
 
 export {
     signin,
@@ -30,5 +31,6 @@ export {
     logoutAll,
     resendOTP,
     forgotPassword,
-    addAUser
+    customAddAUser,
+    customDeleteAUser,
 };
