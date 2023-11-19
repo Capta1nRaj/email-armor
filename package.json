@@ -1,6 +1,6 @@
 {
   "name": "email-armor",
-  "version": "0.0.3-beta.0",
+  "version": "0.0.5-beta.0",
   "description": "Custom email and password authentication with two-step verification via SendGrid.",
   "main": "lib/index.js",
   "type": "module",

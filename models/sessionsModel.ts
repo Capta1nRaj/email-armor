@@ -6,18 +6,6 @@ const SessionsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    token: {
-        type: String,
-        required: true
-    },
-    userIP: {
-        type: String,
-        required: true
-    },
-    userVerified: {
-        type: Boolean,
-        default: false,
-    },
     OTP: {
         type: String,
         required: true

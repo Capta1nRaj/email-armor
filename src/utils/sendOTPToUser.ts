@@ -19,7 +19,15 @@ type EmailTitles = {
   addAUser: string;
 };
 
-async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword: any, functionPerformed: keyof EmailTitles, userIP: any) {
+async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword: any, functionPerformed: keyof EmailTitles, userIP: any, userAgent: string) {
+
+  //! Checking if user is trying to hit the API with a software like Postman
+  if (!userAgent) {
+    return {
+      status: 401,
+      message: "Your device is unauthorized."
+    };
+  }
 
   // Connection to MongoDB
   await connect2MongoDB();
@@ -44,7 +52,8 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
   const replacedHtml = emailTemplate
     .replaceAll('{{username}}', username.toLowerCase())
     .replaceAll('{{OTPOrPassword}}', OTPOrPassword)
-    .replaceAll('{{userIP}}', userIP);
+    .replaceAll('{{userIP}}', userIP)
+    .replaceAll('{{userAgent}}', userAgent)
 
   // Generate and send mail via SendGrid
   const msg = {

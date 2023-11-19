@@ -25,7 +25,15 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
 }
 
 //! Here adminName means the user trying to add an employee, & the name will be saved in userReferredBy
-async function customAddAUser(adminName: any, userFullName: string, userName: string, userEmail: string, userRole:string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[]) {
+async function customAddAUser(adminName: any, userFullName: string, userName: string, userEmail: string, userRole: string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[], userAgent: string) {
+
+    //! Checking if user is trying to hit the API with a software like Postman
+    if (!userAgent) {
+        return {
+            status: 401,
+            message: "Your device is unauthorized."
+        };
+    }
 
     try {
 
@@ -117,7 +125,7 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
         const userIP = await fetchUserIP();
 
         // Here user will get an email with the password regarding that he is added to the management.
-        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP);
+        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP, userAgent);
 
         return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
     } catch (error) {

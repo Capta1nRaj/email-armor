@@ -15,7 +15,15 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function forgotPassword(username: string, OTP: string, newPassword: string) {
+async function forgotPassword(username: string, OTP: string, newPassword: string, userAgent: string) {
+
+    //! Checking if user is trying to hit the API with a software like Postman
+    if (!userAgent) {
+        return {
+            status: 401,
+            message: "Your device is unauthorized."
+        };
+    }
 
     try {
 
@@ -63,7 +71,7 @@ async function forgotPassword(username: string, OTP: string, newPassword: string
                     const encryptedOTP = await encryptPassword(userOTP);
 
                     // Sending OTP To The User
-                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP)
+                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
 
                     // Saving Details To DB
                     new otpModel({
@@ -98,7 +106,7 @@ async function forgotPassword(username: string, OTP: string, newPassword: string
                     const encryptedOTP = await encryptPassword(userOTP);
 
                     // Sending OTP To The User
-                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP)
+                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
 
                     // Updating The Document With New OTP Value
                     checkIfUserAlreadyRequestedForOTP.OTP = encryptedOTP;

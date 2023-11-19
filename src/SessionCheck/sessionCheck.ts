@@ -1,42 +1,50 @@
-import { connect2MongoDB } from "connect2mongodb";
-import sessionsModel from "../../models/sessionsModel.js";
-import decryptPassword from "../PasswordHashing/decryptPassword.js";
-import fetchUserIP from "../utils/fetchUserIP.js";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
-async function sessionCheck(username: string, token: string, id: string) {
+//! Function to fetch all environment variable
+function getEnvVariable(key: string): string {
+    const value = process.env[key];
+    if (!value) {
+        throw new Error(`${key} is undefined.`);
+    }
+    return value;
+}
+
+//! Fethcing  & verifying environment variables
+const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
+
+//! Interface for JWTTokendata
+interface JWTTokenData {
+    userName: string;
+    userAgent: string;
+}
+
+async function sessionCheck(username: string, jwtToken: string, userAgent: string) {
+
+    //! Checking if user is trying to hit the API with a software like Postman
+    if (!userAgent) {
+        return {
+            status: 401,
+            message: "Your device is unauthorized."
+        };
+    }
 
     try {
 
-        // Checking If username, Token, & id Is Passed By Client Or Not
-        if (username.toLowerCase() === undefined || token === undefined || id === undefined || username.toLowerCase().length === 0 || token.length === 0) {
-            return {
-                status: 204,
-                message: "Please Provide Username, Token, & Id",
-            };
-        }
-
-        // Connection To MongoDB
-        await connect2MongoDB();
-
-        // Find User Session Using ID
-        const findSessionUsingUserID = await sessionsModel.findById(id)
-
-        // If No Session Exist In DB, Client Will Receive This Response
-        if (findSessionUsingUserID === null) {
-
+        //! Checking If username, & jwtToken Is Passed By Client Or Not
+        if (!username || !jwtToken) {
             return {
                 status: 400,
                 message: "Session doesn't exist.",
             };
-
         }
 
-        // Decrypting User IP
-        const userIPDecrypted = await decryptPassword(findSessionUsingUserID.userIP);
-        // Fetching User IP
-        const userIP = await fetchUserIP();
+        //! Decrypting the JWTTokendata
+        const decryptingJWTTokenData = jwt.verify(jwtToken, jwtTokenValue) as JWTTokenData;
 
-        if (findSessionUsingUserID.userName === username.toLowerCase() && findSessionUsingUserID.token === token && userIPDecrypted === userIP && findSessionUsingUserID.userVerified === true) {
+        //! Check if decrypted data matches the values
+        if (decryptingJWTTokenData.userName === username && await bcrypt.compare(userAgent, decryptingJWTTokenData.userAgent)) {
+
             return {
                 status: 202,
                 message: "Session exists.",

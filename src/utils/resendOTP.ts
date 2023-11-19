@@ -20,7 +20,15 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function resendOTP(username: string, functionPerformed: string, token: string, id: string) {
+async function resendOTP(username: string, functionPerformed: string, token: string, id: string, userAgent: string) {
+
+    //! Checking if user is trying to hit the API with a software like Postman
+    if (!userAgent) {
+        return {
+            status: 401,
+            message: "Your device is unauthorized."
+        };
+    }
 
     const userName = username.toLowerCase();
 
@@ -69,7 +77,7 @@ async function resendOTP(username: string, functionPerformed: string, token: str
         const findUserAndSendEmail = await accountsModel.findOne({ userName });
 
         // Sending OTP To User
-        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'signUp', userIP);
+        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'signUp', userIP, userAgent);
 
         return {
             status: 201,
@@ -124,7 +132,7 @@ async function resendOTP(username: string, functionPerformed: string, token: str
                 const findUserAndSendEmail = await accountsModel.findOne({ userName });
 
                 // Sending The OTP To The User
-                await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signIn', userIP);
+                await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signIn', userIP, userAgent);
 
                 return {
                     status: 201,
@@ -189,7 +197,7 @@ async function resendOTP(username: string, functionPerformed: string, token: str
         const findUserAndSendEmail = await accountsModel.findOne({ userName });
 
         // Sending OTP To User
-        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'forgotPassword', userIP);
+        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'forgotPassword', userIP, userAgent);
 
         return {
             status: 201,
