@@ -4,7 +4,6 @@ config();
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from '../../models/otpModel.js';
 import settingsModel from '../../models/settingsModel.js';
-import decryptPassword from "../PasswordHashing/decryptPassword.js";
 
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
@@ -12,6 +11,15 @@ import dynamicAccountsModel from "../../models/accountsModel.js";
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
+}
+
+import bcrypt from 'bcrypt'
+//! Checking if BCRYPT_SALT_ROUNDS is a number or not
+let saltRounds: number;
+if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
+    throw new Error("saltRounds is either undefined or a valid number")
+} else {
+    saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
 async function signUpVerify(username: string, otp: string) {
@@ -30,7 +38,7 @@ async function signUpVerify(username: string, otp: string) {
     }
 
     // Decrypting The OTP From The User
-    const decryptedOTP = (otp === await decryptPassword(getUserDetailsAndOTP.OTP));
+    const decryptedOTP = await bcrypt.compare(otp, getUserDetailsAndOTP.OTP);
 
     // If User Enters Wrong OTP
     if (decryptedOTP === false) {

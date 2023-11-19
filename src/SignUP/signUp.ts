@@ -3,14 +3,13 @@ config();
 
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
-import encryptPassword from "../PasswordHashing/encryptPassword.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import fetchUserIP from "../utils/fetchUserIP.js"
 
 import sgMail from "@sendgrid/mail";
 if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
@@ -23,7 +22,16 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string | any[], userReferredBy: string | any[]) {
+import bcrypt from 'bcrypt'
+//! Checking if BCRYPT_SALT_ROUNDS is a number or not
+let saltRounds: number;
+if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
+    throw new Error("saltRounds is either undefined or a valid number")
+} else {
+    saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
+}
+
+async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string) {
 
     try {
 
@@ -93,7 +101,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const userReferralCode = await generatingUserReferralCode();
 
         // Secure user password
-        const encryptedPassword = await encryptPassword(userPassword as string);
+        const encryptedPassword = await bcrypt.hash(userPassword, saltRounds)
 
         // Save New User Details To DB
         await new accountsModel({
@@ -107,7 +115,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
 
         // Generate And Securing an OTP
         const userOTP = await randomStringGenerator(6);
-        const encryptedOTP = await encryptPassword(userOTP);
+        const encryptedOTP = await bcrypt.hash(userOTP, saltRounds)
 
         // Fetching User IP
         const userIP = await fetchUserIP();
