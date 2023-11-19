@@ -18,7 +18,7 @@ async function signInVerify(username: string, otp: string, id: string) {
         if (getDocumentViaID.userName === username.toLowerCase() && decryptedOTP === true) {
 
             // This Will Update userVerified To True, Update ExpireAt After 10 Days, Remove OTP & OTPCount Fields Too
-            await sessionsModel.findByIdAndUpdate(id, { userVerified: true, $unset: { OTP: 1, OTPCount: 1 }, $set: { expireAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000) } }, { new: true });
+            const userData = await sessionsModel.findByIdAndDelete(id);
 
             return {
                 status: 202,
