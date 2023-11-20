@@ -74,7 +74,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                     // Generating Random OTP
                     const userOTP = await randomStringGenerator(6);
 
-                    // Securing OTP Via Crypto
+                    // Securing OTP via bcrypt
                     const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
                     // Sending OTP To The User
@@ -109,7 +109,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                     // Generating Random OTP
                     const userOTP = await randomStringGenerator(6);
 
-                    // Securing OTP Via Crypto
+                    // Securing OTP via bcrypt
                     const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
                     // Sending OTP To The User

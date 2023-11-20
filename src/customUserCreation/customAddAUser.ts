@@ -5,7 +5,6 @@ import { config } from 'dotenv';
 config();
 
 import { connect2MongoDB } from "connect2mongodb";
-import encryptPassword from "../PasswordHashing/encryptPassword.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 
@@ -22,6 +21,15 @@ import dynamicAccountsModel from "../../models/accountsModel.js";
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
+}
+
+//! Checking if BCRYPT_SALT_ROUNDS is a number or not
+import bcrypt from 'bcrypt'
+let saltRounds: number;
+if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
+    throw new Error("saltRounds is either undefined or a valid number")
+} else {
+    saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
 //! Here adminName means the user trying to add an employee, & the name will be saved in userReferredBy
@@ -88,7 +96,7 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
         const userPassword = await generatingUserReferralCode(18);
 
         // Secure user password
-        const encryptedPassword = await encryptPassword(userPassword);
+        const encryptedPassword = await bcrypt.hash(userPassword, saltRounds);
 
         // Checking if the admin exist in DB or someone trying to manipulate the data
         const userAddedBy = await accountsModel.findOne({ userName: adminName })
