@@ -9,10 +9,6 @@ import signInVerify from "./src/SignIn/signInVerify.js";
 // Session Check Imports
 import sessionCheck from "./src/SessionCheck/sessionCheck.js";
 
-// Logout User Imports
-import logoutOnce from "./src/logoutUser/logoutOnce.js";
-import logoutAll from "./src/logoutUser/logoutAll.js";
-
 // Basic Features
 import resendOTP from "./src/utils/resendOTP.js";
 import forgotPassword from "./src/utils/forgotPassword.js";
@@ -27,8 +23,6 @@ export {
     signup,
     signUpVerify,
     sessionCheck,
-    logoutOnce,
-    logoutAll,
     resendOTP,
     forgotPassword,
     customAddAUser,

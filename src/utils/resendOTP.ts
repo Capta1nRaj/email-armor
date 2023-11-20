@@ -8,8 +8,6 @@ import otpModel from "../../models/otpModel.js";
 import sendOTPToUser from "./sendOTPToUser.js";
 import fetchUserIP from "./fetchUserIP.js";
 import randomStringGenerator from "./randomStringGenerator.js";
-import encryptPassword from "../PasswordHashing/encryptPassword.js";
-import decryptPassword from "../PasswordHashing/decryptPassword.js";
 import settingsModel from "../../models/settingsModel.js";
 
 //! Generating A Dynamic Account Model Name If User Needs
@@ -20,7 +18,16 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function resendOTP(username: string, functionPerformed: string, token: string, id: string, userAgent: string) {
+//! Checking if BCRYPT_SALT_ROUNDS is a number or not
+import bcrypt from 'bcrypt'
+let saltRounds: number;
+if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
+    throw new Error("saltRounds is either undefined or a valid number")
+} else {
+    saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
+}
+
+async function resendOTP(username: string, functionPerformed: string, userAgent: string, id: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -68,10 +75,10 @@ async function resendOTP(username: string, functionPerformed: string, token: str
         }
 
         // Encrypting The User OTP
-        const encryptOTP = await encryptPassword(userOTP);
+        const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
         // Updating User OTP Count And OTP
-        await otpModel.findOneAndUpdate({ userName }, { OTP: encryptOTP, $inc: { OTPCount: 1 } });
+        await otpModel.findOneAndUpdate({ userName }, { OTP: encryptedOTP, $inc: { OTPCount: 1 } });
 
         // Finding The User Email Via userName In The DB
         const findUserAndSendEmail = await accountsModel.findOne({ userName });
@@ -108,19 +115,16 @@ async function resendOTP(username: string, functionPerformed: string, token: str
                 };
             }
 
-            // Decrypting User IP
-            const userIPDecrypted = await decryptPassword(findUserSessionViaID.userIP);
-
-            if (findUserSessionViaID.userName === userName && findUserSessionViaID.token === token && userIP === userIPDecrypted) {
+            if (findUserSessionViaID.userName === userName) {
 
                 // Generating userOTP Of Length 6
                 const userOTP = await randomStringGenerator(6);
 
                 // Ecnrytpiong The OTP
-                const encryptOTP = await encryptPassword(userOTP);
+                const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
                 // Updating Secured OTP TO DB
-                findUserSessionViaID.OTP = encryptOTP;
+                findUserSessionViaID.OTP = encryptedOTP;
 
                 // Incrementing OTP Count To DB
                 findUserSessionViaID.OTPCount++;
@@ -182,10 +186,10 @@ async function resendOTP(username: string, functionPerformed: string, token: str
         }
 
         // Encrypting The OTP
-        const encryptOTP = await encryptPassword(userOTP);
+        const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
         // Updating Secured OTP TO DB
-        findIfUserNameExistBeforeSending.OTP = encryptOTP;
+        findIfUserNameExistBeforeSending.OTP = encryptedOTP;
 
         // Incrementing OTP Count To DB
         findIfUserNameExistBeforeSending.OTPCount++;

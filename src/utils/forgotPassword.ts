@@ -2,8 +2,6 @@ import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
 import sendOTPToUser from "./sendOTPToUser.js";
 import randomStringGenerator from "./randomStringGenerator.js";
-import encryptPassword from "../PasswordHashing/encryptPassword.js";
-import decryptPassword from "../PasswordHashing/decryptPassword.js";
 import settingsModel from "../../models/sessionsModel.js";
 
 //! Generating A Dynamic Account Model Name If User Needs
@@ -15,7 +13,16 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
 }
 
-async function forgotPassword(username: string, OTP: string, newPassword: string, userAgent: string) {
+//! Checking if BCRYPT_SALT_ROUNDS is a number or not
+import bcrypt from 'bcrypt'
+let saltRounds: number;
+if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
+    throw new Error("saltRounds is either undefined or a valid number")
+} else {
+    saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
+}
+
+async function forgotPassword(username: string, userAgent: string, OTP: string, newPassword: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -68,7 +75,7 @@ async function forgotPassword(username: string, OTP: string, newPassword: string
                     const userOTP = await randomStringGenerator(6);
 
                     // Securing OTP Via Crypto
-                    const encryptedOTP = await encryptPassword(userOTP);
+                    const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
                     // Sending OTP To The User
                     await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
@@ -103,7 +110,7 @@ async function forgotPassword(username: string, OTP: string, newPassword: string
                     const userOTP = await randomStringGenerator(6);
 
                     // Securing OTP Via Crypto
-                    const encryptedOTP = await encryptPassword(userOTP);
+                    const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
                     // Sending OTP To The User
                     await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
@@ -152,7 +159,7 @@ async function forgotPassword(username: string, OTP: string, newPassword: string
             const finduserAndSendEmailForVerification = await otpModel.findOne({ userName: username.toLowerCase() });
 
             // Decrypting The OTP From The User
-            const decryptedOTP = (OTP === await decryptPassword(finduserAndSendEmailForVerification.OTP));
+            const decryptedOTP = await bcrypt.compare(OTP, finduserAndSendEmailForVerification.OTP)
 
             // If OTP Is False, Client Will Recevie This Response
             if (decryptedOTP === false) {
@@ -165,7 +172,7 @@ async function forgotPassword(username: string, OTP: string, newPassword: string
                 // If OTP Is True, Then, Find & Update The Password Of The Client
             } else if (decryptedOTP === true) {
 
-                const encryptedPassword = await encryptPassword(newPassword)
+                const encryptedPassword = await bcrypt.hash(newPassword, saltRounds);
 
                 await accountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true });
 
