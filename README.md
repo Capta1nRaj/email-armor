@@ -43,8 +43,6 @@ Email Armor is a Node.js module that empowers you to create a robust user **sign
 - ✅ [Resend OTP With Limited Requests.](https://github.com/Capta1nRaj/email-armor.git#installation-)
 - ✅ [Forgot Password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#7-forgot-password-)
 - ✅ [Auto User Session Checking.](https://github.com/Capta1nRaj/email-armor.git#5-auto-user-session-check-)
-- ✅ [Logout Session Of Current Device.](https://github.com/Capta1nRaj/email-armor.git#6-logout-)
-- ✅ [Logout Sessions Of All Devices.](https://github.com/Capta1nRaj/email-armor.git#6-logout-)
 
 ## # More Features To Be Added Later
 
@@ -283,60 +281,7 @@ return {
 }
 ```
 
-### 6. Logout:-
-
-There are **2 methods** to logout the user:-
-
-1. [Logout Current Session Only:-](https://github.com/Capta1nRaj/email-armor.git#method-1-current-session-only-) The user gets logged out only from the current device.
-2. [Logout All Sessions:-](https://github.com/Capta1nRaj/email-armor.git#method-2-all-sessions-) The user gets logged out from all sessions.
-
-#### Method 1 (Current Session Only):-
-
-To begin, fetch **userName** and **token** from cookies in the Front-End, then pass them to the Back-End, similar like this:-
-
-```js
-import { getCookie } from 'cookies-next';
-const userNameCookie = getCookie('userName');
-const userTokenCookie = getCookie('userToken ');
-const userIdCookie = getCookie('userId');
-const data = { userNameCookie, userTokenCookie, userIdCookie };
-const response = await axios.post('YOUR_URL', data);
-```
-
-Once the data is passed to the Back-End, use the **logoutOnce** function to remove the session from MongoDB, like this:-
-
-```js
-import { logoutOnce } from "email-armor";
-const response = await logoutOnce(userNameCookie, userTokenCookie, userId)
-```
-
-Once the user's session is deleted, redirect them to homepage, & you will receive this response:-
-
-```js
-return {
-   status: 200,
-   message: "User Session Deleted.",
-};
-```
-
-After deleting the session from MongoDB, please clear the user's browser cookies via the Front-End like this:-
-
-```js
-import { deleteCookie } from 'cookies-next';
-deleteCookie('userNameCookie');
-deleteCookie('userTokenCookie');
-```
-
-#### Method 2 (All Sessions):-
-
-All steps are the same as we did above in **Method 1**, just in the Back-End, you need to change the imports like this:-
-
-```js
-import { logoutAll } from "email-armor";
-const response = await logoutAll(userNameCookie, userTokenCookie, userIdCookie)
-```
-
-### 7. Forgot Password:-
+### 6. Forgot Password:-
 
 To begin, get **userName** in the Front-End, then pass them to the Back-End, similar like this:-
 
@@ -391,7 +336,7 @@ To resend OTP for the **forgot password** functionality, use these values:-
 const response = await resendOTP(userNameCookie, 'forgotPassword')
 ```
 
-### 8. Resend OTP:-
+### 7. Resend OTP:-
 
 There are **3 functions** to resend OTP to the user:-
 
@@ -506,7 +451,7 @@ return {
 
 **Note:-** Once the OTP limits are reached, the user can try again after waiting for 5-10 minutes, as the OTP document from the database will be automatically deleted after this period.
 
-### 9. Custom Email Template:-
+### 8. Custom Email Template:-
 
 To create custom template, update the ``email-template.html`` file. Currently the tempalte only support **plain html with in-line css**, your can checkout the pre-installed template in the file. You can use ChatGPT to convert your template to **plain html with in-line css**.
 
