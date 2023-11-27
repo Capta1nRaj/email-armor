@@ -10,6 +10,10 @@ const SessionsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    userAgent: {
+        type: String,
+        required: true
+    },
     OTP: {
         type: String,
         required: true
