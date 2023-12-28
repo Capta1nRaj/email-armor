@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/Capta1nRaj/email-armor#readme",
   "dependencies": {
-    "@sendgrid/mail": "^7.7.0",
+    "@sendgrid/mail": "^8.1.0",
     "@types/dotenv": "^8.2.0",
     "bcrypt": "^5.1.1",
     "connect2mongodb": "^1.0.5",
