@@ -20,11 +20,11 @@ async function logoutOnce(username: string, token: any, id: any) {
             };
         }
 
-        // Decrypting User IP
-        const userIPDecrypted = await bcrypt.compare(, findUserSession.userIP);
-
         // Fetching User IP
         const userIP = await fetchUserIP();
+
+        // Decrypting User IP
+        const userIPDecrypted = await bcrypt.compare(userIP, findUserSession.userIP);
 
         // If Current Session Exist In DB, Then, Delete That Specific Session
         if (findUserSession.userName === username.toLowerCase() && findUserSession.token === token && userIPDecrypted === userIP) {

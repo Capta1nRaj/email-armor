@@ -8,9 +8,6 @@ import { connect2MongoDB } from "connect2mongodb";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 
-import sgMail from "@sendgrid/mail";
-sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
-
 import fetchUserIP from '../utils/fetchUserIP.js';
 
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');

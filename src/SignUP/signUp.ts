@@ -7,11 +7,6 @@ import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import fetchUserIP from "../utils/fetchUserIP.js"
 
-import sgMail from "@sendgrid/mail";
-if (process.env.SENDGRID_API_KEY) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
-
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 
 //! Generating A Dynamic Account Model Name If User Needs

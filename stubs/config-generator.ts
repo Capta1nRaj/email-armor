@@ -53,10 +53,10 @@ async function generateFileIfNotExists(filename: string, content: string) {
 //! Generating .json file 
 async function generateConfigFile() {
     const jsonTemplate = {
-        "SENDGRID_SIGN_UP_MAIL_TITLE": "Custom-Signup-Title",
-        "SENDGRID_SIGN_IN_MAIL_TITLE": "Custom-Signin-Title",
-        "SENDGRID_FORGOT_PASSWORD_MAIL_TITLE": "Custom-Forgot-Password-Title",
-        "SENDGRID_ADD_A_USER_MAIL_TITLE": "Custom-Add-A-User-Title",
+        "RESEND_SIGN_UP_MAIL_TITLE": "Custom-Signup-Title",
+        "RESEND_SIGN_IN_MAIL_TITLE": "Custom-Signin-Title",
+        "RESEND_FORGOT_PASSWORD_MAIL_TITLE": "Custom-Forgot-Password-Title",
+        "RESEND_ADD_A_USER_MAIL_TITLE": "Custom-Add-A-User-Title",
         "REFERRED_POINTS": 100,
         "REFERRED_PERSON_POINTS": 25,
         "OTP_LIMITS": 3,
@@ -89,10 +89,10 @@ async function updatePoints() {
             referred_points: userConfig.REFERRED_POINTS,
             referred_person_points: userConfig.REFERRED_PERSON_POINTS,
             otp_limits: userConfig.OTP_LIMITS,
-            signup_mail_title: userConfig.SENDGRID_SIGN_UP_MAIL_TITLE,
-            signin_mail_title: userConfig.SENDGRID_SIGN_IN_MAIL_TITLE,
-            forgot_password_mail_title: userConfig.SENDGRID_FORGOT_PASSWORD_MAIL_TITLE,
-            add_a_user_mail_title: userConfig.SENDGRID_ADD_A_USER_MAIL_TITLE,
+            signup_mail_title: userConfig.RESEND_SIGN_UP_MAIL_TITLE,
+            signin_mail_title: userConfig.RESEND_SIGN_IN_MAIL_TITLE,
+            forgot_password_mail_title: userConfig.RESEND_FORGOT_PASSWORD_MAIL_TITLE,
+            add_a_user_mail_title: userConfig.RESEND_ADD_A_USER_MAIL_TITLE,
         }).save();
     } else {
         await settingsModel.updateOne({}, {
@@ -100,10 +100,10 @@ async function updatePoints() {
                 referred_points: userConfig.REFERRED_POINTS,
                 referred_person_points: userConfig.REFERRED_PERSON_POINTS,
                 otp_limits: userConfig.OTP_LIMITS,
-                signup_mail_title: userConfig.SENDGRID_SIGN_UP_MAIL_TITLE,
-                signin_mail_title: userConfig.SENDGRID_SIGN_IN_MAIL_TITLE,
-                forgot_password_mail_title: userConfig.SENDGRID_FORGOT_PASSWORD_MAIL_TITLE,
-                add_a_user_mail_title: userConfig.SENDGRID_ADD_A_USER_MAIL_TITLE,
+                signup_mail_title: userConfig.RESEND_SIGN_UP_MAIL_TITLE,
+                signin_mail_title: userConfig.RESEND_SIGN_IN_MAIL_TITLE,
+                forgot_password_mail_title: userConfig.RESEND_FORGOT_PASSWORD_MAIL_TITLE,
+                add_a_user_mail_title: userConfig.RESEND_ADD_A_USER_MAIL_TITLE,
             },
         });
     }

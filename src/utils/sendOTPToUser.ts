@@ -2,13 +2,15 @@
 import { config } from 'dotenv';
 config();
 
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 import settingsModel from '../../models/settingsModel.js';
 import { connect2MongoDB } from 'connect2mongodb';
 
-// Check if SENDGRID_API_KEY is defined
-if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_EMAIL_ID) {
-  throw new Error("SENDGRID_API_KEY or SENDGRID_EMAIL_ID is not defined in your environment variables.");
+// Check if RESEND_API_KEY is defined
+if (!process.env.RESEND_API_KEY || !process.env.RESEND_EMAIL_ID) {
+  throw new Error("RESEND_API_KEY or RESEND_EMAIL_ID is not defined in your environment variables.");
 }
 
 // Define type for email titles
@@ -55,15 +57,13 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
     .replaceAll('{{userIP}}', userIP)
     .replaceAll('{{userAgent}}', userAgent)
 
-  // Generate and send mail via SendGrid
-  const msg = {
+  // Generate and send mail via Resend
+  const data = await resend.emails.send({
+    from: process.env.RESEND_EMAIL_ID as string,
     to: userEmail,
-    from: process.env.SENDGRID_EMAIL_ID as string,
     subject: emailTitle,
-    html: replacedHtml
-  };
-
-  await sgMail.send(msg);
+    html: replacedHtml,
+  });
 }
 
 export default sendOTPToUser;

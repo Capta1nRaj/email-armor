@@ -29,7 +29,7 @@
 
 ## # Overview
 
-Email Armor is a Node.js module that empowers you to create a robust user **sign-up** and **sign-in** system with **two-step verification** using **SendGrid**(freemium). It's also equipped with a **built-in referral system** to enhance user engagement and growth. **Note:-** It only supports MongoDB as database for now.
+Email Armor is a Node.js module that empowers you to create a robust user **sign-up** and **sign-in** system with **two-step verification** using **RESEND**(freemium). It's also equipped with a **built-in referral system** to enhance user engagement and growth. **Note:-** It only supports MongoDB as database for now.
 
 ## # Features In v1
 
@@ -75,8 +75,8 @@ npm i cookies-next
 
 ```js
 MONGODB_URI = YOUR_MONGODB_URI (mongodb://127.0.0.1:27017/DB-NAME)
-SENDGRID_API_KEY = YOUR_SENDGRID_API_KEY
-SENDGRID_EMAIL_ID = YOUR_SENDGRID_EMAIL_ID
+RESEND_API_KEY = YOUR_RESEND_API_KEY
+RESEND_EMAIL_ID = YOUR_RESEND_EMAIL_ID
 SECRET_KEY = YOUR_SECRET_KEY_FOR_ENCRYPTION_OF_LENGTH_32_OR_GREATER
 SECRET_IV = YOUR_SECRET_IV_FOR_ENCRYPTION_OF_LENGTH_32_OR_GREATER
 ALLOWED_EMAIL_DOMAINS=@gmail.com,@hotmail.com {YOU_CAN_ADD_MORE_BY_SEPERATING_WITH_,(comma)}
@@ -92,9 +92,9 @@ npx email-armor init
 
    | Name                                | Type    | Usage                                  |
    | ----------------------------------- | ------- | -------------------------------------- |
-   | SENDGRID_SIGN_UP_MAIL_TITLE         | String  | Custom title for sign-up confirmation. |
-   | SENDGRID_SIGN_IN_MAIL_TITLE         | String  | Custom title for sign-in confirmation. |
-   | SENDGRID_FORGOT_PASSWORD_MAIL_TITLE | String  | Custom-Forgot-Password-Title.          |
+   | RESEND_SIGN_UP_MAIL_TITLE         | String  | Custom title for sign-up confirmation. |
+   | RESEND_SIGN_IN_MAIL_TITLE         | String  | Custom title for sign-in confirmation. |
+   | RESEND_FORGOT_PASSWORD_MAIL_TITLE | String  | Custom-Forgot-Password-Title.          |
    | REFERRED_POINTS                     | Integer | Points awarded to the referrer.        |
    | REFERRED_PERSON_POINTS              | Integer | Points awarded to the referred person. |
    | OTP_LIMITS                          | Integer | Max Times User Can Request For OTP.    |

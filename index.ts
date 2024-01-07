@@ -17,6 +17,9 @@ import forgotPassword from "./src/utils/forgotPassword.js";
 import customAddAUser from './src/customUserCreation/customAddAUser.js'
 import customDeleteAUser from './src/customUserCreation/customDeleteAUser.js'
 
+// Logout
+import logoutOnce from "./src/logout/logoutOnce.js";
+
 export {
     signin,
     signInVerify,
