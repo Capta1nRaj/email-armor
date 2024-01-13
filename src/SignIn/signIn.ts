@@ -9,7 +9,6 @@ import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import settingsModel from "../../models/settingsModel.js";
 
-
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
 import dynamicAccountsModel from "../../models/accountsModel.js";

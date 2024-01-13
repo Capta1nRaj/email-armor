@@ -7,6 +7,8 @@ import { connect2MongoDB } from 'connect2mongodb';
 import settingsModel from '../models/settingsModel.js';
 import { URL } from 'url';
 
+import ora from 'ora';
+
 //! Importing the HTML files
 const emailTemplate = fs.readFileSync(new URL('../src/emailTemplates/email-template.html', import.meta.url), 'utf8');
 const addAUserEmailTemplate = fs.readFileSync(new URL('../src/emailTemplates/add-a-user-email-template.html', import.meta.url), 'utf8');
@@ -26,12 +28,24 @@ async function promptUser() {
 
 //* Will execute the functions as per user prompt
 async function executeOperationsBasedOnConfirmation() {
+
     const checkIfFileExistOrNot = fs.existsSync('email-armour.json');
     const checkEmailTemplateFile = fs.existsSync('email-template.html');
 
     //*  If any the the above files not exist, will run the prompt & ask user to add user creation feature or not
     if (!checkIfFileExistOrNot || !checkEmailTemplateFile) {
         const answers = await promptUser();
+
+        const s = ora({
+            text: "Building....",
+            spinner: "aesthetic",
+            color: "red",
+        });
+        s.start();
+        setTimeout(() => {
+            s.stop();
+        }, 2000);
+
         //* If user says yes, it will generate a add-a-user-email-template.html
         //* Else if will execute the common functions 
         if (answers.confirmation) {
