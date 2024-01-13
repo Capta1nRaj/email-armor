@@ -39,7 +39,7 @@ async function signin(username: string, userPassword: string | boolean, userAgen
     await connect2MongoDB();
 
     // Finding If User Exist Or Not Fron userName
-    const findUserToLogin = await accountsModel.findOne({ userName: username.toLowerCase() });
+    const findUserToLogin = await accountsModel.findOne({ userName: username.toLowerCase() }).select('userVerified userName userEmail userPassword');
 
     // If userName Don't Exist, Return A Bad Request
     if (!findUserToLogin) {
@@ -62,7 +62,7 @@ async function signin(username: string, userPassword: string | boolean, userAgen
         const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
         // Checking If OTP Already Exist In DB Or Not
-        const checkIfOTPExistOrNot = await otpModel.findOne({ userName: username.toLowerCase() });
+        const checkIfOTPExistOrNot = await otpModel.findOne({ userName: username.toLowerCase() }).select('OTPCount');
 
         // If OTP Not Exist, Then, Create A New Doc & Save To DB
         if (!checkIfOTPExistOrNot) {
@@ -70,7 +70,7 @@ async function signin(username: string, userPassword: string | boolean, userAgen
             new otpModel({
                 userName: username.toLowerCase(),
                 OTP: encryptedOTP,
-            }).save();
+            }).save().then();
 
             // If OTP Exist, Then, Find & Update The Doc & Save To DB
         } else {
@@ -79,7 +79,7 @@ async function signin(username: string, userPassword: string | boolean, userAgen
             // If Exceeded Then Don't Generate More OTP
 
             // It Will Fetch Settings, & Get The OTP Limits Values From The DB
-            const fetchSettings = await settingsModel.findOne({})
+            const fetchSettings = await settingsModel.findOne({}).select('otp_limits');
             if (checkIfOTPExistOrNot.OTPCount >= fetchSettings.otp_limits) {
                 return {
                     status: 403,
@@ -88,12 +88,12 @@ async function signin(username: string, userPassword: string | boolean, userAgen
             }
 
             // If Not Exceeded Then Generate New OTP & Increase OTPCount By 1
-            await otpModel.findOneAndUpdate({ userName: username.toLowerCase() }, { $inc: { OTPCount: 1 }, OTP: encryptedOTP }, { new: true });
+            otpModel.updateOne({ userName: username.toLowerCase() }, { $inc: { OTPCount: 1 }, OTP: encryptedOTP }, { new: true }).then();
 
         }
 
         // Sending OTP To User Registered E-Mail
-        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signUp', userIP, userAgent);
+        sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signUp', userIP, userAgent).then();
 
         return {
             status: 401,
@@ -119,10 +119,11 @@ async function signin(username: string, userPassword: string | boolean, userAgen
         const savedData = await new sessionsModel({
             userName: username.toLowerCase(),
             OTP: encryptedOTP,
-        }).save();
+            userAgent: userAgent
+        }).save().select('id');
 
         // Sending OTP To User Registered E-Mail
-        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signIn', userIP, userAgent);
+        sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signIn', userIP, userAgent).then();
 
         return {
             status: 201,

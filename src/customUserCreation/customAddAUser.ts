@@ -71,7 +71,7 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
         await connect2MongoDB();
 
         // Checking If UserName & EmailId Already Exists In DB Or Not
-        const existingUser = await accountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] });
+        const existingUser = await accountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
 
         // If User Exist, Notify The Client With The Following Message Depending On The Case
         if (existingUser) {
@@ -90,13 +90,13 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
         const userReferralCode = await generatingUserReferralCode(6);
 
         // Generating random user password which will be sent to the user via mail
-        const userPassword = await generatingUserReferralCode(18);
+        const userPassword = await randomStringGenerator(18);
 
         // Secure user password
         const encryptedPassword = await bcrypt.hash(userPassword, saltRounds);
 
         // Checking if the admin exist in DB or someone trying to manipulate the data
-        const userAddedBy = await accountsModel.findOne({ userName: adminName })
+        const userAddedBy = await accountsModel.findOne({ userName: adminName }).select('userName');
 
         // If admin not found, throw this error
         if (userAddedBy === null) {
@@ -104,7 +104,7 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
         }
 
         // Save New User Details To DB
-        await new accountsModel({
+        new accountsModel({
             userFullName,
             userName: userName.toLowerCase(),
             userEmail: userEmail.toLowerCase(),
@@ -121,16 +121,16 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
             ],
             userUniqueIdentification: uniqueIdentifiers || [],
             userRole: userRole || ""
-        }).save();
+        }).save().then();
 
         // Updating the admin's userReferrals field with the user's userName he added
-        await accountsModel.findOneAndUpdate({ userName: adminName }, { $addToSet: { userReferrals: userName } });
+        accountsModel.updateOne({ userName: adminName }, { $addToSet: { userReferrals: userName } }).then();
 
         // Fetching User IP
         const userIP = await fetchUserIP();
 
         // Here user will get an email with the password regarding that he is added to the management.
-        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP, userAgent);
+        sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP, userAgent);
 
         return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
     } catch (error) {
@@ -144,7 +144,7 @@ async function generatingUserReferralCode(number: number) {
     const userReferralCode = await randomStringGenerator(number);
 
     // Check If Code Already Exist In DB Or Not
-    const existingCode = await accountsModel.findOne({ userReferralCode });
+    const existingCode = await accountsModel.exists({ userReferralCode });
 
     // If Referral Code Exists, Regenerate New Code
     if (existingCode) {

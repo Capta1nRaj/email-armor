@@ -75,7 +75,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         await connect2MongoDB();
 
         // Checking If UserName & EmailId Already Exists In DB Or Not
-        const existingUser = await accountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] });
+        const existingUser = await accountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
 
         // If User Exist, Notify The Client With The Following Message Depending On The Case
         if (existingUser) {
@@ -93,7 +93,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // Checking If User Entered A Referral Code Or Not
         // If Entered, Check That It Exist Or Not
         // If Not Entered, Set As ''
-        const referredByUser = userReferredBy.length > 0 ? await accountsModel.findOne({ userReferralCode: userReferredBy }) : '';
+        const referredByUser = userReferredBy.length > 0 ? await accountsModel.findOne({ userReferralCode: userReferredBy }).select('userName') : '';
 
         // If User Entered Wrong Referral Code, Return The Error
         if (referredByUser === null) {
@@ -107,14 +107,14 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const encryptedPassword = await bcrypt.hash(userPassword, saltRounds)
 
         // Save New User Details To DB
-        await new accountsModel({
+        new accountsModel({
             userFullName,
             userName: userName.toLowerCase(),
             userEmail: userEmail.toLowerCase(),
             userPassword: encryptedPassword,
             userReferralCode: userReferralCode,
             userReferredBy: referredByUser.userName || "",
-        }).save();
+        }).save().then();
 
         // Generate And Securing an OTP
         const userOTP = await randomStringGenerator(6);
@@ -124,10 +124,10 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const userIP = await fetchUserIP();
 
         // Send Un-Secured OTP To The User Registered E-Mail
-        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP, userAgent);
+        sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP, userAgent);
 
         // Saving Secured OTP to DB
-        await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();
+        new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save().then();
 
         return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
 
@@ -142,7 +142,7 @@ async function generatingUserReferralCode() {
     const userReferralCode = await randomStringGenerator(6);
 
     // Check If Code Already Exist In DB Or Not
-    const existingCode = await accountsModel.findOne({ userReferralCode });
+    const existingCode = await accountsModel.exists({ userReferralCode });
 
     // If Referral Code Exists, Regenerate New Code
     if (existingCode) {

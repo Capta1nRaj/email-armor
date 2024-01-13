@@ -15,19 +15,15 @@ async function customDeleteAUser(userName: string) {
         await connect2MongoDB();
 
         // Deleting user from db
-        const deletingUser = await accountsModel.findOneAndDelete({ userName });
+        const deletingUser = await accountsModel.findOneAndDelete({ userName }).select('userReferredBy');
 
         // Deleteing the userName from the referred users userReferrals docuemnt
         await accountsModel.findOneAndUpdate({ userName: deletingUser.userReferredBy }, { $pull: { userReferrals: userName } });
-        
-        // Not sending userPassword in response
-        const { userPassword, ...deletedUserData } = deletingUser._doc;
-
 
         return {
             status: 200,
             message: "User deleted successfully.",
-            deletedUserData
+            deletingUser
         };
 
     } catch (error) {

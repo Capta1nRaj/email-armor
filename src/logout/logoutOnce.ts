@@ -10,7 +10,7 @@ async function logoutOnce(username: string, token: any, id: any) {
     try {
 
         // Finding User Sessions By Id
-        const findUserSession = await sessionsModel.findById(id);
+        const findUserSession = await sessionsModel.findById(id).select('userName userIP token');
 
         // If Session Is Null Means No Session Exist In DB, Then, Client Will Receive This Response
         if (findUserSession.length === null) {
@@ -28,7 +28,7 @@ async function logoutOnce(username: string, token: any, id: any) {
 
         // If Current Session Exist In DB, Then, Delete That Specific Session
         if (findUserSession.userName === username.toLowerCase() && findUserSession.token === token && userIPDecrypted === userIP) {
-            await sessionsModel.findByIdAndDelete(id);
+            await sessionsModel.deleteOne({ _id: id });
             return {
                 status: 200,
                 message: "User Session Deleted.",

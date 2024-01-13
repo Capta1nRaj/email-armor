@@ -44,7 +44,7 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
     try {
 
         // Finding Session Via ID
-        const getDocumentViaID = await sessionsModel.findById(id)
+        const getDocumentViaID = await sessionsModel.findById(id).select('userName OTP');
 
         // Decrypting The OTP From The User
         const decryptedOTP = await bcrypt.compare(otp, getDocumentViaID.OTP);
@@ -53,7 +53,7 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
         if (getDocumentViaID.userName === username.toLowerCase() && decryptedOTP === true) {
 
             // This Will Update userVerified To True, Update ExpireAt After 10 Days, Remove OTP & OTPCount Fields Too
-            const userData = await sessionsModel.findByIdAndDelete(id);
+            const userData = await sessionsModel.findByIdAndDelete(id).select('userName');
 
             // Encrypting userAgent
             const enccryptedUserAgent = await bcrypt.hash(userAgent, saltRounds)

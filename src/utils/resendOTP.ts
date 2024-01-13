@@ -45,7 +45,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
     const userOTP = await randomStringGenerator(6);
 
     // It Will Fetch Settings, & Get The OTP Limits Values From The DB
-    const fetchSettings = await settingsModel.findOne({})
+    const fetchSettings = await settingsModel.findOne({}).select('otp_limits');
 
     // Fetching userIP
     const userIP = await fetchUserIP();
@@ -54,7 +54,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
     if (functionPerformed === 'newUserVerification') {
 
         // Checking If User Exist In DB Or Not
-        const findIfUserNameExistBeforeSending = await otpModel.findOne({ userName });
+        const findIfUserNameExistBeforeSending = await otpModel.findOne({ userName }).select('OTPCount');
 
         // If Not, Means Someone Is Trying To Uh....
         if (!findIfUserNameExistBeforeSending) {
@@ -78,13 +78,13 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
         // Updating User OTP Count And OTP
-        await otpModel.findOneAndUpdate({ userName }, { OTP: encryptedOTP, $inc: { OTPCount: 1 } });
+        otpModel.updateOne({ userName }, { OTP: encryptedOTP, $inc: { OTPCount: 1 } }).then();
 
         // Finding The User Email Via userName In The DB
-        const findUserAndSendEmail = await accountsModel.findOne({ userName });
+        const findUserAndSendEmail = await accountsModel.findOne({ userName }).select('userEmail');
 
         // Sending OTP To User
-        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'signUp', userIP, userAgent);
+        sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signUp', userIP, userAgent);
 
         return {
             status: 201,
@@ -97,7 +97,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         try {
 
             // Finding If User Session Exist In DB Or Not
-            const findUserSessionViaID = await sessionsModel.findById(id)
+            const findUserSessionViaID = await sessionsModel.findById(id).select('userName OTPCount');
 
             // If Not, Means Someone Is Trying To Uh....
             if (findUserSessionViaID === null) {
@@ -130,13 +130,13 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
                 findUserSessionViaID.OTPCount++;
 
                 // Updating The DB With New Details
-                await findUserSessionViaID.save();
+                findUserSessionViaID.save().then();
 
                 // Finding The Email Of The User
-                const findUserAndSendEmail = await accountsModel.findOne({ userName });
+                const findUserAndSendEmail = await accountsModel.findOne({ userName }).select('userEmail');
 
                 // Sending The OTP To The User
-                await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signIn', userIP, userAgent);
+                sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signIn', userIP, userAgent).then();
 
                 return {
                     status: 201,
@@ -165,7 +165,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
     } else if (functionPerformed === 'forgotPassword') {
 
         // Finding If User Exist In DB Or Not
-        const findIfUserNameExistBeforeSending = await otpModel.findOne({ userName });
+        const findIfUserNameExistBeforeSending = await otpModel.findOne({ userName }).select('OTPCount');
 
         // If Not, Means Someone Is Trying To Uh....
         if (findIfUserNameExistBeforeSending === null) {
@@ -195,13 +195,13 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         findIfUserNameExistBeforeSending.OTPCount++;
 
         // Updating The DB With New Details
-        await findIfUserNameExistBeforeSending.save();
+        findIfUserNameExistBeforeSending.save().then();
 
         // Finding userEmail Via userName
-        const findUserAndSendEmail = await accountsModel.findOne({ userName });
+        const findUserAndSendEmail = await accountsModel.findOne({ userName }).select('userEmail');
 
         // Sending OTP To User
-        await sendOTPToUser(userName, findUserAndSendEmail?.userEmail, userOTP, 'forgotPassword', userIP, userAgent);
+        sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'forgotPassword', userIP, userAgent).then();
 
         return {
             status: 201,

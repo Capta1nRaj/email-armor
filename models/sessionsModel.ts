@@ -8,11 +8,13 @@ const SessionsSchema = new mongoose.Schema({
     },
     jwtToken: {
         type: String,
-        required: true
     },
     userAgent: {
         type: String,
         required: true
+    },
+    userRole: {
+        type: String,
     },
     OTP: {
         type: String,
