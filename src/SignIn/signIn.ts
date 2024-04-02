@@ -4,7 +4,6 @@ config();
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
 import sessionsModel from "../../models/sessionsModel.js";
-import fetchUserIP from '../utils/fetchUserIP.js';
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import settingsModel from "../../models/settingsModel.js";
@@ -26,7 +25,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
     saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
-async function signin(username: string, userPassword: string | boolean, userAgent: string) {
+async function signin(username: string, userPassword: string | boolean, userAgent: string, userIP: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -49,9 +48,6 @@ async function signin(username: string, userPassword: string | boolean, userAgen
         };
     }
 
-    // Fetching User IP
-    const userIP = await fetchUserIP();
-
     // If User Is Not Verified, Redirect User To SignUp Page, & Ask Them To Verify First
     if (!findUserToLogin.userVerified) {
 
@@ -67,10 +63,10 @@ async function signin(username: string, userPassword: string | boolean, userAgen
         // If OTP Not Exist, Then, Create A New Doc & Save To DB
         if (!checkIfOTPExistOrNot) {
 
-            new otpModel({
+            await new otpModel({
                 userName: username.toLowerCase(),
                 OTP: encryptedOTP,
-            }).save().then();
+            }).save();
 
             // If OTP Exist, Then, Find & Update The Doc & Save To DB
         } else {
@@ -88,12 +84,12 @@ async function signin(username: string, userPassword: string | boolean, userAgen
             }
 
             // If Not Exceeded Then Generate New OTP & Increase OTPCount By 1
-            otpModel.updateOne({ userName: username.toLowerCase() }, { $inc: { OTPCount: 1 }, OTP: encryptedOTP }, { new: true }).then();
+            await otpModel.updateOne({ userName: username.toLowerCase() }, { $inc: { OTPCount: 1 }, OTP: encryptedOTP }, { new: true });
 
         }
 
         // Sending OTP To User Registered E-Mail
-        sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signUp', userIP, userAgent).then();
+        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signUp', userIP, userAgent);
 
         return {
             status: 401,
@@ -120,10 +116,10 @@ async function signin(username: string, userPassword: string | boolean, userAgen
             userName: username.toLowerCase(),
             OTP: encryptedOTP,
             userAgent: userAgent
-        }).save().select('id');
+        }).save();
 
         // Sending OTP To User Registered E-Mail
-        sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signIn', userIP, userAgent).then();
+        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signIn', userIP, userAgent);
 
         return {
             status: 201,

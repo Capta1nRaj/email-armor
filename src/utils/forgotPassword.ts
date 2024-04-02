@@ -7,7 +7,6 @@ import settingsModel from "../../models/sessionsModel.js";
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
 import dynamicAccountsModel from "../../models/accountsModel.js";
-import fetchUserIP from "./fetchUserIP.js";
 var accountsModel = dynamicAccountsModel();
 if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
     accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
@@ -22,7 +21,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
     saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
-async function forgotPassword(username: string, userAgent: string, OTP: string, newPassword: string) {
+async function forgotPassword(username: string, userAgent: string, OTP: string, newPassword: string, userIP: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -42,9 +41,6 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
             };
 
         }
-
-        // Fetching User IP
-        const userIP = await fetchUserIP();
 
         // Using This Case, We Are Generating OTP For User To Authenticate
         if (username.toLowerCase() !== undefined && OTP === undefined && newPassword === undefined) {
@@ -122,7 +118,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                     checkIfUserAlreadyRequestedForOTP.OTPCount++;
 
                     // Updating The DB With New Details
-                    checkIfUserAlreadyRequestedForOTP.save().then();
+                    await checkIfUserAlreadyRequestedForOTP.save();
 
                     return {
                         status: 201,
@@ -174,9 +170,9 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
 
                 const encryptedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-                accountsModel.updateOne({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true }).then();
+                await accountsModel.updateOne({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true });
 
-                otpModel.deleteOne({ userName: username.toLowerCase() }).then();
+                await otpModel.deleteOne({ userName: username.toLowerCase() });
 
                 return {
                     status: 200,

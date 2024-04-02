@@ -8,8 +8,6 @@ import { connect2MongoDB } from "connect2mongodb";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 
-import fetchUserIP from '../utils/fetchUserIP.js';
-
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 
 //! Generating A Dynamic Account Model Name If User Needs
@@ -30,7 +28,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 }
 
 //! Here adminName means the user trying to add an employee, & the name will be saved in userReferredBy
-async function customAddAUser(adminName: any, userFullName: string, userName: string, userEmail: string, userRole: string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[], userAgent: string) {
+async function customAddAUser(adminName: string, userFullName: string, userName: string, userEmail: string, userRole: string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[], userAgent: string, userIP: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -104,7 +102,7 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
         }
 
         // Save New User Details To DB
-        new accountsModel({
+        await new accountsModel({
             userFullName,
             userName: userName.toLowerCase(),
             userEmail: userEmail.toLowerCase(),
@@ -121,13 +119,10 @@ async function customAddAUser(adminName: any, userFullName: string, userName: st
             ],
             userUniqueIdentification: uniqueIdentifiers || [],
             userRole: userRole || ""
-        }).save().then();
+        }).save();
 
         // Updating the admin's userReferrals field with the user's userName he added
-        accountsModel.updateOne({ userName: adminName }, { $addToSet: { userReferrals: userName } }).then();
-
-        // Fetching User IP
-        const userIP = await fetchUserIP();
+        await accountsModel.updateOne({ userName: adminName }, { $addToSet: { userReferrals: userName } });
 
         // Here user will get an email with the password regarding that he is added to the management.
         sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP, userAgent);

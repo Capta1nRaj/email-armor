@@ -4,7 +4,7 @@ const dynamicAccountsModel = (modelName = 'accounts') => {
     const AccountsSchema = new mongoose.Schema({
         userFullName: {
             type: String,
-            required: true,
+            required: true
         },
         userName: {
             type: String,

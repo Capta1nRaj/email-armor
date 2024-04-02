@@ -1,9 +1,8 @@
 import { connect2MongoDB } from "connect2mongodb";
 import sessionsModel from "../../models/sessionsModel.js";
-import fetchUserIP from "../utils/fetchUserIP.js";
 import bcrypt from 'bcrypt';
 
-async function logoutOnce(username: string, token: any, id: any) {
+async function logoutOnce(username: string, token: any, id: any, userIP: string) {
 
     await connect2MongoDB();
 
@@ -20,14 +19,11 @@ async function logoutOnce(username: string, token: any, id: any) {
             };
         }
 
-        // Fetching User IP
-        const userIP = await fetchUserIP();
-
         // Decrypting User IP
         const userIPDecrypted = await bcrypt.compare(userIP, findUserSession.userIP);
 
         // If Current Session Exist In DB, Then, Delete That Specific Session
-        if (findUserSession.userName === username.toLowerCase() && findUserSession.token === token && userIPDecrypted === userIP) {
+        if (findUserSession.userName === username.toLowerCase() && findUserSession.token === token && userIPDecrypted) {
             await sessionsModel.deleteOne({ _id: id });
             return {
                 status: 200,

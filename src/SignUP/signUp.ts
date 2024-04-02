@@ -5,7 +5,6 @@ import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
-import fetchUserIP from "../utils/fetchUserIP.js"
 
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 
@@ -26,7 +25,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
     saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
-async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string) {
+async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userIP: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -97,7 +96,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
 
         // If User Entered Wrong Referral Code, Return The Error
         if (referredByUser === null) {
-            return { status: 200, message: "Wrong Referral Code" };
+            return { status: 400, message: "Wrong Referral Code" };
         }
 
         // Generating A Unique userReferralCode For The New User
@@ -107,27 +106,24 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const encryptedPassword = await bcrypt.hash(userPassword, saltRounds)
 
         // Save New User Details To DB
-        new accountsModel({
+        await new accountsModel({
             userFullName,
             userName: userName.toLowerCase(),
             userEmail: userEmail.toLowerCase(),
             userPassword: encryptedPassword,
             userReferralCode: userReferralCode,
             userReferredBy: referredByUser.userName || "",
-        }).save().then();
+        }).save();
 
         // Generate And Securing an OTP
         const userOTP = await randomStringGenerator(6);
         const encryptedOTP = await bcrypt.hash(userOTP, saltRounds)
 
-        // Fetching User IP
-        const userIP = await fetchUserIP();
-
         // Send Un-Secured OTP To The User Registered E-Mail
         sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP, userAgent);
 
         // Saving Secured OTP to DB
-        new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save().then();
+        await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();
 
         return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
 
