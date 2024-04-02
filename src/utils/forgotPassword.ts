@@ -22,7 +22,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 }
 
 async function forgotPassword(username: string, userAgent: string, OTP: string, newPassword: string, userIP: string) {
-
+    console.log(username, userAgent, OTP, newPassword, userIP)
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
         return {
@@ -43,7 +43,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
         }
 
         // Using This Case, We Are Generating OTP For User To Authenticate
-        if (username.toLowerCase() !== undefined && OTP === undefined && newPassword === undefined) {
+        if (username.toLowerCase() && !OTP && !newPassword) {
 
             await connect2MongoDB();
 
@@ -131,7 +131,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
 
             // When User Enters OTP, & New Password, Then,
             // First We Will Validate The OTP, Then, If OTP Corrent We Update The Password, Else We Throw Error As Response To The Client
-        } else if (username.toLowerCase() !== undefined && OTP !== undefined && newPassword !== undefined) {
+        } else if (username.toLowerCase() && OTP && newPassword) {
 
             // If User Enters OTP With Length Greater Than 6, Throw An Error
             if (OTP.length > 6) {

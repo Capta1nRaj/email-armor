@@ -10,8 +10,7 @@
     "clean": "rimraf lib/",
     "copy-files": "copyfiles -u 1 src/**/*.html lib/src",
     "lint": "npx eslint .",
-    "build": "tsc",
-    "start": "npm run clean && npm rum lint && npm run build && node lib/index.js && npm run copy-files",
+    "build": "npm run clean && npm rum lint && tsc && node lib/index.js && npm run copy-files",
     "test": "npm run build && npm run copy-files"
   },
   "repository": {
