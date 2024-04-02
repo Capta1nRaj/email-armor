@@ -52,8 +52,14 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
         // If userName Is Same, & OTP Is Also Same, Update The Session Fields, Else Throw An Error
         if (getDocumentViaID.userName === username.toLowerCase() && decryptedOTP === true) {
 
-            // This Will Update userVerified To True, Update ExpireAt After 10 Days, Remove OTP & OTPCount Fields Too
-            const userData = await sessionsModel.findByIdAndDelete(id).select('userName');
+            // This Will Update userVerified To True, Update ExpireAt After 1 Month, Remove OTP & OTPCount Fields Too
+            const userData = await sessionsModel.findByIdAndUpdate(id,
+                {
+                    userVerified: true, $unset: { OTP: 1, OTPCount: 1 },
+                    $set: { expireAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) }
+                },
+                { new: true })
+                .select('userName');
 
             // Encrypting userAgent
             const enccryptedUserAgent = await bcrypt.hash(userAgent, saltRounds)

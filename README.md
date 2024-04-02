@@ -252,14 +252,14 @@ return {
 
 ### 5. Auto User Session Check:-
 
-What if the user's session has expired, and they are still logged in, or if they attempt to manipulate cookies and perform unauthorized actions? You know that's not good, right? So, use the `sessionCheck()` function to verify if the user's session is legitimate and active. Follow these steps:-
+What if the user's session has expired, and they are still logged in, or if they attempt to manipulate cookies and perform unauthorized actions? You know that's not good, right? So, use the `localSessionCheck()` function to verify if the user's session is legitimate and active. Follow these steps:-
 
 ```js
-import { sessionCheck } from "email-armor";
+import { localSessionCheck } from "email-armor";
 const userNameCookie = getCookie('userName');
 const userTokenCookie = getCookie('userToken');
 const userIdCookie = getCookie('userId');
-const response = await sessionCheck(userNameCookie, userTokenCookie, userId);
+const response = await localSessionCheck(userNameCookie, userTokenCookie, userId);
 // Note:- IP Will Be Automatically Fetched.
 ```
 

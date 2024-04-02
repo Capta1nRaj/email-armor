@@ -7,7 +7,7 @@ import signin from "./src/SignIn/signIn.js";
 import signInVerify from "./src/SignIn/signInVerify.js";
 
 // Session Check Imports
-import sessionCheck from "./src/SessionCheck/sessionCheck.js";
+import localSessionCheck from "./src/SessionCheck/localSessionCheck.js";
 
 // Basic Features
 import resendOTP from "./src/utils/resendOTP.js";
@@ -25,7 +25,7 @@ export {
     signInVerify,
     signup,
     signUpVerify,
-    sessionCheck,
+    localSessionCheck,
     resendOTP,
     forgotPassword,
     customAddAUser,

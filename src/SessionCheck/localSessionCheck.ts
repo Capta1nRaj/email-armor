@@ -19,7 +19,7 @@ interface JWTTokenData {
     userAgent: string;
 }
 
-async function sessionCheck(username: string, jwtToken: string, userAgent: string) {
+async function localSessionCheck(username: string, jwtToken: string, userAgent: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -70,4 +70,4 @@ async function sessionCheck(username: string, jwtToken: string, userAgent: strin
     }
 }
 
-export default sessionCheck;
+export default localSessionCheck;
