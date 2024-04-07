@@ -22,7 +22,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 }
 
 async function forgotPassword(username: string, userAgent: string, OTP: string, newPassword: string, userIP: string) {
-    console.log(username, userAgent, OTP, newPassword, userIP)
+
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
         return {

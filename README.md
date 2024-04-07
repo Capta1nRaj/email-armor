@@ -21,20 +21,21 @@
 
 **Note:-** Currently, this is under development, so please check beta versions for the latest updates, or refer to latest documentation on [email-armor-github-repo](https://github.com/Capta1nRaj/email-armor.git).
 
-**Note:-** Please refer to the documentation on my GitHub repository in case I missed or inaccurately mentioned something here. Documentation for [beta-0.0.2](https://github.com/Capta1nRaj/email-armor.git).
+**Note:-** Please refer to the documentation on my GitHub repository in case I missed or inaccurately mentioned something here. Documentation for [Email Armor](https://github.com/Capta1nRaj/email-armor.git).
 
 <!-- ## Demo Link:- -->
 
 <!-- To test a demo before using in your main project, visit here and read the README before starting:- [https://github.com/Capta1nRaj/email-armor-demo/tree/v3.1](https://github.com/Capta1nRaj/email-armor-demo/tree/v3.1) -->
 
-## # Overview
+## # Overview:
 
-Email Armor is a Node.js module that empowers you to create a robust user **sign-up** and **sign-in** system with **two-step verification** using **RESEND**(freemium). It's also equipped with a **built-in referral system** to enhance user engagement and growth. **Note:-** It only supports MongoDB as database for now.
+Email Armor is a Node.js/Next.js npm module that empowers you to create a robust user **sign-up** and **sign-in** system with **two-step verification** using **RESEND**(freemium). It's also equipped with a **built-in referral system** to enhance user engagement and growth. **Note:-** It only supports MongoDB as database for now.
 
-## # Features In v1
+## # Features In v1:
 
 - ✅ [Compatible with Next.js.](https://nextjs.org/)
-- ✅ [Custom Mail Template*](https://github.com/Capta1nRaj/email-armor.git#9-custom-email-template-)
+- ✅ [Compatible with Node.js.](https://nextjs.org/)
+- ✅ [Custom Mail Template.](https://github.com/Capta1nRaj/email-armor.git#9-custom-email-template-)
 - ✅ [Sign-Up With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#1-sign-up-)
 - ✅ [Sign-In With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#3-sign-in-)
 - ✅ [Passwords Are Encrypted With Crypto.](https://nodejs.org/api/crypto.html)
@@ -42,7 +43,7 @@ Email Armor is a Node.js module that empowers you to create a robust user **sign
 - ✅ [No Disposable E-Mails Are Allowed To Signup.](https://github.com/Capta1nRaj/email-armor.git#installation-)
 - ✅ [Resend OTP With Limited Requests.](https://github.com/Capta1nRaj/email-armor.git#installation-)
 - ✅ [Forgot Password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#7-forgot-password-)
-- ✅ [Auto User Session Checking.](https://github.com/Capta1nRaj/email-armor.git#5-auto-user-session-check-)
+- ✅ [Auto User Session Checking](https://github.com/Capta1nRaj/email-armor.git#5-auto-user-session-check-)
 
 ## # More Features To Be Added Later
 
@@ -52,20 +53,20 @@ Email Armor is a Node.js module that empowers you to create a robust user **sign
 * ❌ Change/Update User Info.
 * ❌ Delete Account But Make Sure User Don't Get Referral Points Again Once He Sign Up With Any Referral Code.
 
-## # Getting Started
+## # Getting Started:
 
-### Installation:-
+### Installation:
 
-1. Begin by installing the packages:-
+1. Begin by installing the packages:
 
-In back-end/front-end, depends on your use, install **mail-paasify**:-
+In back-end/front-end, depends on your use, install **email-armor**:
 
 ```js
 npm i email-armor
 ```
 
-Whereas, in front-end, for fetching cookies, install **cookies-next**:-
-**Note:-** You can use your own method for fetching cookies. For eg.:- You can also set/fetch cookies via server-side in Next.js, [READ HERE](https://nextjs.org/docs/app/api-reference/functions/cookies).
+Whereas, in front-end, for fetching cookies, install **cookies-next**:
+**Note:-** You can use your own method for fetching cookies. Eg.: You can also set/fetch cookies via server-side in Next.js, [READ HERE](https://nextjs.org/docs/app/api-reference/functions/cookies).
 
 ```js
 npm i cookies-next
@@ -77,10 +78,16 @@ npm i cookies-next
 MONGODB_URI = YOUR_MONGODB_URI (mongodb://127.0.0.1:27017/DB-NAME)
 RESEND_API_KEY = YOUR_RESEND_API_KEY
 RESEND_EMAIL_ID = YOUR_RESEND_EMAIL_ID
-SECRET_KEY = YOUR_SECRET_KEY_FOR_ENCRYPTION_OF_LENGTH_32_OR_GREATER
-SECRET_IV = YOUR_SECRET_IV_FOR_ENCRYPTION_OF_LENGTH_32_OR_GREATER
-ALLOWED_EMAIL_DOMAINS=@gmail.com,@hotmail.com {YOU_CAN_ADD_MORE_BY_SEPERATING_WITH_,(comma)}
+ALLOWED_EMAIL_DOMAINS = @gmail.com,@hotmail.com {YOU_CAN_ADD_MORE_BY_SEPERATING_WITH_,(comma)}
+ACCOUNTS_MODEL_NAME = MODEL_NAME_FOR_YOU_ACCOUNTS_COLLECTION
+BCRYPT_SALT_ROUNDS = ENTER_ANY_VALUE_BETWEEN-8-12
+JWT_TOKEN_VALUE = YOUR-256-BIT-SECRET
+EXPIRE_JWT_TOKEN = TIME_TO_EXPIRE_THE_TOKEN
 ```
+
+[👉 Get Resend variables 👈](https://resend.com)
+[👉 Ref. for BCRYPT_SALT_ROUNDS 👈](https://www.npmjs.com/package/bcrypt#a-note-on-rounds)
+[👉 Ref. for EXPIRE_JWT_TOKEN 👈](https://github.com/vercel/ms)
 
 3. Generate the configuration file in server by using the command:-
 
@@ -89,16 +96,15 @@ npx email-armor init
 ```
 
 4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.
-
-   | Name                                | Type    | Usage                                  |
-   | ----------------------------------- | ------- | -------------------------------------- |
-   | RESEND_SIGN_UP_MAIL_TITLE         | String  | Custom title for sign-up confirmation. |
-   | RESEND_SIGN_IN_MAIL_TITLE         | String  | Custom title for sign-in confirmation. |
-   | RESEND_FORGOT_PASSWORD_MAIL_TITLE | String  | Custom-Forgot-Password-Title.          |
-   | REFERRED_POINTS                     | Integer | Points awarded to the referrer.        |
-   | REFERRED_PERSON_POINTS              | Integer | Points awarded to the referred person. |
-   | OTP_LIMITS                          | Integer | Max Times User Can Request For OTP.    |
-
+   | Name                               | Type    | Usage                     |
+   | ---------------------------------- | ------- | -------------------------------------- |
+   | RESEND_SIGN_UP_MAIL_TITLE          | String  | Custom title for sign-up confirmation. |
+   | RESEND_SIGN_IN_MAIL_TITLE          | String  | Custom title for sign-in confirmation. |
+   | RESEND_FORGOT_PASSWORD_MAIL_TITLE  | String  | Custom-Forgot-Password-Title.          |
+   | ~~RESEND_ADD_A_USER_MAIL_TITLE~~   | ~~String~~  | ~~Custom-Add-A-User-Title.~~                |
+   | REFERRED_POINTS                    | Integer | Points awarded to the referrer.        |
+   | REFERRED_PERSON_POINTS             | Integer | Points awarded to the referred person. |
+   | OTP_LIMITS                         | Integer | Max Times User Can Request For OTP.    |
 5. Once you update these values, again run this command to update your referral points values in your MongoDB database:-
 
 ```js

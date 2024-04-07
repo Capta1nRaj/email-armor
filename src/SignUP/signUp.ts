@@ -125,7 +125,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // Saving Secured OTP to DB
         await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();
 
-        return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
+        return { status: 201, message: "Account Created Successfully, OTP Sent To Mail", userName: userName.toLowerCase() };
 
     } catch (error) {
         return { status: 500, message: "Internal Server Error" };

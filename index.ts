@@ -3,7 +3,7 @@ import signup from "./src/SignUP/signUp.js";
 import signUpVerify from "./src/SignUP/signUpVerify.js";
 
 // Sign-In User Imports
-import signin from "./src/SignIn/signIn.js";
+import signIn from "./src/SignIn/signIn.js";
 import signInVerify from "./src/SignIn/signInVerify.js";
 
 // Session Check Imports
@@ -21,7 +21,7 @@ import customDeleteAUser from './src/customUserCreation/customDeleteAUser.js'
 import logoutOnce from "./src/logout/logoutOnce.js";
 
 export {
-    signin,
+    signIn,
     signInVerify,
     signup,
     signUpVerify,

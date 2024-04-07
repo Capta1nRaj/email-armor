@@ -25,7 +25,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
     saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
-async function signin(username: string, userPassword: string | boolean, userAgent: string, userIP: string) {
+async function signIn(username: string, userPassword: string | boolean, userAgent: string, userIP: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -47,6 +47,12 @@ async function signin(username: string, userPassword: string | boolean, userAgen
             message: "Please Validate Your Details",
         };
     }
+
+    // If User Is Verified, Then, Decrypt The User Password
+    const decryptedPassword = await bcrypt.compare(userPassword as string, findUserToLogin.userPassword)
+
+    // If incorrect password, Return A Bad Request
+    if (!decryptedPassword) { return { status: 400, message: "Please Validate Your Details", }; }
 
     // If User Is Not Verified, Redirect User To SignUp Page, & Ask Them To Verify First
     if (!findUserToLogin.userVerified) {
@@ -98,10 +104,6 @@ async function signin(username: string, userPassword: string | boolean, userAgen
         };
     }
 
-    // If User Is Verified, Then, Decrypt The User Password
-
-    const decryptedPassword = await bcrypt.compare(userPassword as string, findUserToLogin.userPassword)
-
     // Checking If userName & userPassword Are The Same As Per The Client Entered
     if (findUserToLogin.userName === username.toLowerCase() && decryptedPassword) {
 
@@ -138,4 +140,4 @@ async function signin(username: string, userPassword: string | boolean, userAgen
     }
 }
 
-export default signin;
+export default signIn;
