@@ -80,7 +80,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         const findUserAndSendEmail = await accountsModel.findOne({ userName }).select('userEmail');
 
         // Sending OTP To User
-        sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signUp', userIP, userAgent);
+        await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signUp', userIP, userAgent);
 
         return {
             status: 201,

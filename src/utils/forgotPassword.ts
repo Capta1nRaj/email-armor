@@ -74,7 +74,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                     const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
                     // Sending OTP To The User
-                    sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
+                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
 
                     // Saving Details To DB
                     new otpModel({
@@ -109,7 +109,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                     const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
 
                     // Sending OTP To The User
-                    sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
+                    await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
 
                     // Updating The Document With New OTP Value
                     checkIfUserAlreadyRequestedForOTP.OTP = encryptedOTP;

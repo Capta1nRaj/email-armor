@@ -120,7 +120,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const encryptedOTP = await bcrypt.hash(userOTP, saltRounds)
 
         // Send Un-Secured OTP To The User Registered E-Mail
-        sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP, userAgent);
+        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP, userAgent);
 
         // Saving Secured OTP to DB
         await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();

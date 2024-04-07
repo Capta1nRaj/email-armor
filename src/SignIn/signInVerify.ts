@@ -25,19 +25,12 @@ function getEnvVariable(key: string): string {
 const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
 let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
 
-if (expireJwtToken === '0') {
-    expireJwtToken = null;
-}
+if (expireJwtToken === '0') { expireJwtToken = null }
 
 async function signInVerify(username: string, otp: string, id: string, userAgent: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
-    if (!userAgent) {
-        return {
-            status: 401,
-            message: "Your device is unauthorized."
-        };
-    }
+    if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
     await connect2MongoDB();
 
@@ -52,50 +45,43 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
         // If userName Is Same, & OTP Is Also Same, Update The Session Fields, Else Throw An Error
         if (getDocumentViaID.userName === username.toLowerCase() && decryptedOTP === true) {
 
-            // This Will Update userVerified To True, Update ExpireAt After 1 Month, Remove OTP & OTPCount Fields Too
-            const userData = await sessionsModel.findByIdAndUpdate(id,
-                {
-                    userVerified: true, $unset: { OTP: 1, OTPCount: 1 },
-                    $set: { expireAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) }
-                },
-                { new: true })
-                .select('userName');
-
             // Encrypting userAgent
-            const enccryptedUserAgent = await bcrypt.hash(userAgent, saltRounds)
+            const encryptedUserAgent = await bcrypt.hash(userAgent, saltRounds)
 
             // JWT Token data
             const jwtData = {
-                userName: userData.userName,
-                userAgent: enccryptedUserAgent
+                userName: username,
+                userAgent: encryptedUserAgent
             }
 
             // Signing JWT Token with jwtTokenValue & expiry date
             const signOptions = expireJwtToken ? { expiresIn: expireJwtToken } : undefined;
             const signedJWTToken = jwt.sign(jwtData, jwtTokenValue, signOptions);
 
+            // Encrypting jwtToken
+            const encryptedJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
+
+            // This Will Update userVerified To True, Update ExpireAt After 1 Month, Remove OTP & OTPCount Fields Too
+            await sessionsModel.updateOne({ _id: id },
+                {
+                    userVerified: true, $unset: { OTP: 1, OTPCount: 1 },
+                    $set: { expireAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
+                    jwtToken: encryptedJWTToken
+                },
+                { new: true })
+
             // Sending JWT Token to user
-            return {
-                status: 202,
-                message: "Account Verified.",
-                signedJWTToken
-            }
+            return { status: 202, message: "Account Verified.", signedJWTToken }
 
         } else {
 
-            return {
-                status: 400,
-                message: "Wrong OTP."
-            }
+            return { status: 400, message: "Wrong OTP." }
 
         }
 
     } catch (error) {
 
-        return {
-            status: 400,
-            message: "No Accounts Were Found To Verify.",
-        };
+        return { status: 400, message: "No Accounts Were Found To Verify.", };
 
     }
 }

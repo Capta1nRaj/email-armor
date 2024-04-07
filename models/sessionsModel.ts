@@ -33,6 +33,4 @@ const SessionsSchema = new mongoose.Schema({
     timestamps: true
 });
 
-SessionsSchema.index({ userName: 1 }); // Creating a index on userEmail
-
 export default mongoose.models.sessions || mongoose.model("sessions", SessionsSchema);

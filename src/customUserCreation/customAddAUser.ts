@@ -125,7 +125,7 @@ async function customAddAUser(adminName: string, userFullName: string, userName:
         await accountsModel.updateOne({ userName: adminName }, { $addToSet: { userReferrals: userName } });
 
         // Here user will get an email with the password regarding that he is added to the management.
-        sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP, userAgent);
+        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP, userAgent);
 
         return { status: 201, message: "Account Created Successfully", userName: userName.toLowerCase() };
     } catch (error) {
