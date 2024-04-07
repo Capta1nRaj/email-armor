@@ -20,6 +20,7 @@ import customDeleteAUser from './src/customUserCreation/customDeleteAUser.js'
 
 // Logout
 import logoutOnce from "./src/logout/logoutOnce.js";
+import logoutAll from "./src/logout/logoutAll.js";
 
 export {
     signIn,
@@ -32,4 +33,6 @@ export {
     forgotPassword,
     customAddAUser,
     customDeleteAUser,
+    logoutOnce,
+    logoutAll
 };

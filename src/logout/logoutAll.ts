@@ -2,7 +2,7 @@ import { connect2MongoDB } from "connect2mongodb";
 import sessionsModel from "../../models/sessionsModel.js";
 import bcrypt from 'bcrypt';
 
-async function logoutOnce(id: string, username: string, userAgent: any, token: any) {
+async function logoutAll(id: string, username: string, userAgent: any, token: any) {
 
     await connect2MongoDB();
 
@@ -20,8 +20,8 @@ async function logoutOnce(id: string, username: string, userAgent: any, token: a
 
         // If Current Session Exist In DB, Then, Delete That Specific Session
         if (compringUserName && checkIfUserAgentValid && comparingJWTToken) {
-            await sessionsModel.deleteOne({ _id: id });
-            return { status: 200, message: "User Session Deleted.", };
+            await sessionsModel.deleteMany({ userName: username });
+            return { status: 200, message: "All User Sessions Deleted.", };
         }
 
         // If Not Exist In DB, Then, Client Will Receive This Response
@@ -32,4 +32,4 @@ async function logoutOnce(id: string, username: string, userAgent: any, token: a
     }
 }
 
-export default logoutOnce;
+export default logoutAll;

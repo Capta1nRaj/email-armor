@@ -32,7 +32,7 @@ async function serverSessionCheck(username: string, id: string, jwtToken: string
 
         //! Comparing the JWTTokendata & User Agent
         const checkIfJWTTokenValid = await bcrypt.compare(jwtToken, findSessionById.jwtToken);
-        const checkIfUserAgentValid = findSessionById.userAgent === userAgent
+        const checkIfUserAgentValid = findSessionById.userAgent === userAgent;
 
         //! Check if decrypted data matches the values
         if (checkIfJWTTokenValid && checkIfUserAgentValid) {
