@@ -44,7 +44,7 @@ async function signIn(username: string, userPassword: string | boolean, userAgen
     if (!findUserToLogin) {
         return {
             status: 400,
-            message: "Please Validate Your Details",
+            message: "Please Validate Your Details.",
         };
     }
 
@@ -52,7 +52,7 @@ async function signIn(username: string, userPassword: string | boolean, userAgen
     const decryptedPassword = await bcrypt.compare(userPassword as string, findUserToLogin.userPassword)
 
     // If incorrect password, Return A Bad Request
-    if (!decryptedPassword) { return { status: 400, message: "Please Validate Your Details", }; }
+    if (!decryptedPassword) { return { status: 400, message: "Please Validate Your Details.", }; }
 
     // If User Is Not Verified, Redirect User To SignUp Page, & Ask Them To Verify First
     if (!findUserToLogin.userVerified) {
@@ -134,7 +134,7 @@ async function signIn(username: string, userPassword: string | boolean, userAgen
 
         return {
             status: 400,
-            message: "Please Validate Your Details",
+            message: "Please Validate Your Details.",
         };
 
     }

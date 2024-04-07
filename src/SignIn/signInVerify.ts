@@ -77,7 +77,7 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
             // Sending JWT Token to user
             return {
                 status: 202,
-                message: "Account Verified",
+                message: "Account Verified.",
                 signedJWTToken
             }
 
@@ -85,7 +85,7 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
 
             return {
                 status: 400,
-                message: "Wrong OTP"
+                message: "Wrong OTP."
             }
 
         }
@@ -94,7 +94,7 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
 
         return {
             status: 400,
-            message: "No Accounts Were Found To Verify",
+            message: "No Accounts Were Found To Verify.",
         };
 
     }

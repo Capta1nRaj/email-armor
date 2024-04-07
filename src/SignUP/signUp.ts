@@ -41,14 +41,14 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const regexForuserFullName = /^[a-zA-Z\s]+$/;
 
         if (!regexForuserFullName.test(userFullName)) {
-            return { status: 400, message: "Invalid userFullname" };
+            return { status: 400, message: "Invalid userFullname!" };
         }
 
         // Checking If userName Is Valid Or Not
         const regexForuserName = /^[a-zA-Z0-9_]+$/;
 
         if (!regexForuserName.test(userName)) {
-            return { status: 400, message: "Invalid userName" };
+            return { status: 400, message: "Invalid userName!" };
         }
 
         // Checking If Email Includes 2 @ Signs
@@ -67,7 +67,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         if (userPassword.length <= 8) {
             return {
                 status: 206,
-                message: "Min. Password Length Must Be Greater Than 8",
+                message: "Min. Password Length Must Be Greater Than 8.",
             };
         }
 
@@ -96,7 +96,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
 
         // If User Entered Wrong Referral Code, Return The Error
         if (referredByUser === null) {
-            return { status: 400, message: "Wrong Referral Code" };
+            return { status: 400, message: "Wrong Referral Code!" };
         }
 
         // Generating A Unique userReferralCode For The New User
@@ -125,10 +125,10 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // Saving Secured OTP to DB
         await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();
 
-        return { status: 201, message: "Account Created Successfully, OTP Sent To Mail", userName: userName.toLowerCase() };
+        return { status: 201, message: "Account Created Successfully, OTP Sent To Mail.", userName: userName.toLowerCase() };
 
     } catch (error) {
-        return { status: 500, message: "Internal Server Error" };
+        return { status: 500, message: "Internal Server Error!" };
     }
 }
 

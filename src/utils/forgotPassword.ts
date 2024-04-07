@@ -145,7 +145,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
             if (newPassword.length <= 8) {
                 return {
                     status: 206,
-                    message: "Min. Password Length Must Be Greater Than 8",
+                    message: "Min. Password Length Must Be Greater Than 8.",
                 };
             }
 
