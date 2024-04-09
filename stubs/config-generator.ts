@@ -10,8 +10,8 @@ import { URL } from 'url';
 import ora from 'ora';
 
 //! Importing the HTML files
-const emailTemplate = fs.readFileSync(new URL('../src/emailTemplates/email-template.html', import.meta.url), 'utf8');
-const addAUserEmailTemplate = fs.readFileSync(new URL('../src/emailTemplates/add-a-user-email-template.html', import.meta.url), 'utf8');
+const emailTemplate = fs.readFileSync(new URL('../src/EmailTemplates/email-template.html', import.meta.url), 'utf8');
+const addAUserEmailTemplate = fs.readFileSync(new URL('../src/EmailTemplates/add-a-user-email-template.html', import.meta.url), 'utf8');
 
 //* Running a prompt that whether the user wants to add user creation feature or not
 async function promptUser() {

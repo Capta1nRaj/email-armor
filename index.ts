@@ -11,17 +11,21 @@ import localSessionCheck from "./src/SessionCheck/localSessionCheck.js";
 import serverSessionCheck from "./src/SessionCheck/serverSessionCheck.js";
 
 // Only for personal or high-end user (use this if making any admin panel type websites)
-import customAddAUser from './src/customUserCreation/customAddAUser.js'
-import customDeleteAUser from './src/customUserCreation/customDeleteAUser.js'
+import customAddAUser from './src/CustomUserCreation/customAddAUser.js'
+import customDeleteAUser from './src/CustomUserCreation/customDeleteAUser.js'
 
 // Logout
-import logoutOnce from "./src/logout/logoutOnce.js";
-import logoutAll from "./src/logout/logoutAll.js";
+import logoutOnce from "./src/LogoutSessions/logoutOnce.js";
+import logoutAll from "./src/LogoutSessions/logoutAll.js";
 
 // Basic Features
 import resendOTP from "./src/others/resendOTP.js";
-import forgotPassword from "./src/others/forgotPassword.js";
-import changePassword from "./src/others/changePassword.js"
+import forgotPassword from "./src/PasswordMangment/forgotPassword.js";
+import changePassword from "./src/PasswordMangment/changePassword.js"
+
+// Profile Pic Features
+import addUserProfilePic from './src/ProfilePicUpdate/addUserProfilePic.js'
+import removeProfilePic from './src/ProfilePicUpdate/removeProfilePic.js'
 
 export {
     signIn,
@@ -36,5 +40,7 @@ export {
     customDeleteAUser,
     logoutOnce,
     logoutAll,
-    changePassword
+    changePassword,
+    addUserProfilePic,
+    removeProfilePic
 };

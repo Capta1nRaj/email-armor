@@ -23,7 +23,7 @@ const dynamicAccountsModel = (modelName = 'accounts') => {
         userMobileNumber: {
             type: String,
         },
-        userPic: {
+        userProfilePic: {
             type: String,
             default: ""
         },

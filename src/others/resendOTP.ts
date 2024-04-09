@@ -204,6 +204,8 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
             message: "OTP Resent To The User.",
         };
 
+    } else if (functionPerformed === 'changePassword') {
+
     }
 }
 

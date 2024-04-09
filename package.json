@@ -11,7 +11,7 @@
     "copy-files": "copyfiles -u 1 src/**/*.html lib/src",
     "lint": "npx eslint .",
     "build": "npm run clean && npm rum lint && tsc && node lib/index.js && npm run copy-files",
-    "test": "npm run build && cd ./test && nodemon index.js",
+    "test": "npm run build && cd ./test && node index.js",
     "publishBeta":"npm run build && npm publish --tag beta",
     "readme": "git add . && git commit -m \"README.md updated\" && git push",
     "link":"npm run build && cd ./test && npm link email-armor"
