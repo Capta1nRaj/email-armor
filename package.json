@@ -12,7 +12,8 @@
     "lint": "npx eslint .",
     "build": "npm run clean && npm rum lint && tsc && node lib/index.js && npm run copy-files",
     "test": "npm run build && cd ./test && nodemon index.js",
-    "publishBeta":"npm run build && npm publish --tag beta"
+    "publishBeta":"npm run build && npm publish --tag beta",
+    "readme": "git add . && git commit -m \"README.md updated\" && git push"
   },
   "repository": {
     "type": "git",

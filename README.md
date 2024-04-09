@@ -1,20 +1,23 @@
 <p align="center">
   <a href="https://github.com/Capta1nRaj/email-armor" target="_blank"><img width="200px" src="https://github.com/Capta1nRaj/email-armor/blob/main/email-armor.png?raw=true" /></a>
   <h3 align="center">Email Armor</h3>
-  <p align="center" style="align: center;">
-      <a href="https://github.com/Capta1nRaj/email-armor/stargazers">
-         <img src="https://img.shields.io/github/stars/Capta1nRaj/email-armor" alt="Github Stars" />
-      </a>
-      <a href="https://github.com/Capta1nRaj/email-armor/blob/main/LICENSE">
-         <img src="https://img.shields.io/github/license/Capta1nRaj/email-armor" alt="Licence" />
-      </a>
-      <a href="https://www.npmtrends.com/email-armor">
-         <img src="https://img.shields.io/npm/dm/email-armor" alt="Downloads" />
-      </a>
-      <a href="https://bundlephobia.com/package/email-armor@0.0.1-beta.0">
-         <img src="https://img.shields.io/bundlephobia/min/email-armor/0.0.1-beta.0" alt="Size" />
-      </a>
-   </p>
+</p>
+
+<div align="center">
+
+[![Github Stars](https://img.shields.io/github/stars/Capta1nRaj/email-armor)](https://github.com/Capta1nRaj/email-armor/stargazers)
+[![Licence](https://img.shields.io/github/license/Capta1nRaj/email-armor)](https://github.com/Capta1nRaj/email-armor/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/npm/dm/email-armor)](https://www.npmtrends.com/email-armor)
+[![npm version](https://img.shields.io/npm/v/email-armor.svg)](https://www.npmjs.com/package/email-armor)
+[![Size](https://img.shields.io/bundlephobia/min/email-armor/0.0.1-beta.0)]([CODE_OF_CONDUCT.md](https://bundlephobia.com/package/email-armor@0.0.1-beta.0))
+[![Twitter Follow](https://img.shields.io/twitter/follow/capta1ncodes?style=social)](https://twitter.com/capta1ncodes)
+
+</div>
+
+<p align="center">
+   <a href="https://www.npmjs.com/package/mongoose">
+      <img src="https://nodei.co/npm/email-armor.png" alt="Size" />
+   </a>
 </p>
 
 # What Is Email Armor?
@@ -34,16 +37,17 @@ Email Armor is a Node.js/Next.js npm module that empowers you to create a robust
 ## # Features In v1:
 
 - ✅ [Compatible with Next.js.](https://nextjs.org/)
-- ✅ [Compatible with Node.js.](https://nextjs.org/)
-- ✅ [Custom Mail Template.](https://github.com/Capta1nRaj/email-armor.git#9-custom-email-template-)
-- ✅ [Sign-Up With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#1-sign-up-)
-- ✅ [Sign-In With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#3-sign-in-)
+- ✅ [Compatible with Node.js.](https://nodejs.org/)
+- ✅ [Custom Mail Template.](https://github.com/Capta1nRaj/email-armor.git#9-custom-email-template)
+- ✅ [Sign-Up With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#1-sign-up)
+- ✅ [Sign-In With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#3-sign-in)
 - ✅ [Passwords Are Encrypted With Crypto.](https://nodejs.org/api/crypto.html)
-- ✅ [Referral System.](https://github.com/Capta1nRaj/email-armor.git#installation-)
-- ✅ [No Disposable E-Mails Are Allowed To Signup.](https://github.com/Capta1nRaj/email-armor.git#installation-)
-- ✅ [Resend OTP With Limited Requests.](https://github.com/Capta1nRaj/email-armor.git#installation-)
-- ✅ [Forgot Password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#7-forgot-password-)
-- ✅ [Auto User Session Checking](https://github.com/Capta1nRaj/email-armor.git#5-auto-user-session-check-)
+- ✅ [Referral System.](https://github.com/Capta1nRaj/email-armor.git#installation)
+- ✅ [No Disposable E-Mails Are Allowed To Signup.](https://github.com/Capta1nRaj/email-armor.git#installation)
+- ✅ [Resend OTP With Limited Requests.](https://github.com/Capta1nRaj/email-armor.git#installation)
+- ✅ [Forgot Password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#7-forgot-password)
+- ✅ [Local Session Check](https://github.com/Capta1nRaj/email-armor.git#5-local-sessions-check)
+- ✅ [Server Session Check](https://github.com/Capta1nRaj/email-armor.git#6-server-session-check)
 
 ## # More Features To Be Added Later
 
@@ -95,7 +99,9 @@ EXPIRE_JWT_TOKEN = TIME_TO_EXPIRE_THE_TOKEN
 npx email-armor init
 ```
 
-4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.| Name                              | Type        | Usage                                  |
+4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.
+
+   | Name                              | Type        | Usage                                  |
    | --------------------------------- | ----------- | -------------------------------------- |
    | RESEND_SIGN_UP_MAIL_TITLE         | String      | Custom title for sign-up confirmation. |
    | RESEND_SIGN_IN_MAIL_TITLE         | String      | Custom title for sign-in confirmation. |
@@ -297,7 +303,7 @@ return {
 ### 5. Local Session Check:
 If you want to check the JWT token validity or if anyone attempts to manipulate cookies, use `localSessionCheck()` to validate it. Make sure to use it only for non-sensitive data validation. For sensitive data, use [server session check](https://github.com/Capta1nRaj/email-armor.git#5-auto-user-session-check-).
 
-### 6. ~~Server Session Check~~ (Working on it):
+### 6. Server Session Check:
 
 What if the user's session has expired, and they are still logged in, or if anyone attempts to manipulate cookies and perform unauthorized actions? You know that's not good, right? So, use the `serverSessionCheck()` function to verify if the user's session is legitimate and active. Follow these steps:
 
