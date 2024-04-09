@@ -19,6 +19,7 @@ type EmailTitles = {
   signIn: string;
   forgotPassword: string;
   addAUser: string;
+  changePassword: string
 };
 
 async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword: any, functionPerformed: keyof EmailTitles, userIP: any, userAgent: string) {
@@ -42,7 +43,8 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
     'signUp': fetchSettings.signup_mail_title,
     'signIn': fetchSettings.signin_mail_title,
     'forgotPassword': fetchSettings.forgot_password_mail_title,
-    'addAUser': fetchSettings.add_a_user_mail_title
+    'addAUser': fetchSettings.add_a_user_mail_title,
+    'changePassword': fetchSettings.change_password_mail_title
   };
 
   const emailTitle = emailTitles[functionPerformed];

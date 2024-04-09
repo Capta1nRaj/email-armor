@@ -1,7 +1,7 @@
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
-import sendOTPToUser from "./sendOTPToUser.js";
-import randomStringGenerator from "./randomStringGenerator.js";
+import sendOTPToUser from "../utils/sendOTPToUser.js";
+import randomStringGenerator from "../utils/randomStringGenerator.js";
 import settingsModel from "../../models/sessionsModel.js";
 
 //! Generating A Dynamic Account Model Name If User Needs

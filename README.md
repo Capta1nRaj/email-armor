@@ -51,6 +51,7 @@ Email Armor is a Node.js/Next.js npm module that empowers you to create a robust
 
 ## # More Features To Be Added Later
 
+* ❌ Change password.
 * ❌ Lock User After N-Times Failed Login Attempts & Send Notification Email To The User.
 * ❌ Unlock The Locked User Account (User + Auto).
 * ❌ Add Phone Number In Accounts Model With 2 Step Verification.

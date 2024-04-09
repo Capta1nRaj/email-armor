@@ -37,7 +37,7 @@ async function signIn(username: string, userPassword: string | boolean, userAgen
 
     await connect2MongoDB();
 
-    // Finding If User Exist Or Not Fron userName
+    // Finding If User Exist Or Not From DB
     const findUserToLogin = await accountsModel.findOne({ userName: username.toLowerCase() }).select('userVerified userName userEmail userPassword');
 
     // If userName Don't Exist, Return A Bad Request
@@ -131,12 +131,7 @@ async function signIn(username: string, userPassword: string | boolean, userAgen
         };
 
     } else {
-
-        return {
-            status: 400,
-            message: "Please Validate Your Details.",
-        };
-
+        return { status: 400, message: "Please Validate Your Details.", };
     }
 }
 
