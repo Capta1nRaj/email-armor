@@ -46,12 +46,15 @@ Email Armor is a Node.js/Next.js npm module that empowers you to create a robust
 - ✅ [No Disposable E-Mails Are Allowed To Signup.](https://github.com/Capta1nRaj/email-armor.git#installation)
 - ✅ [Resend OTP With Limited Requests.](https://github.com/Capta1nRaj/email-armor.git#installation)
 - ✅ [Forgot Password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#7-forgot-password)
+- ✅ [Change password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#)
 - ✅ [Local Session Check](https://github.com/Capta1nRaj/email-armor.git#5-local-sessions-check)
 - ✅ [Server Session Check](https://github.com/Capta1nRaj/email-armor.git#6-server-session-check)
+- ✅ [User Profile Pic Add](https://github.com/Capta1nRaj/email-armor.git#)
+- ✅ [User Profile Pic Remove](https://github.com/Capta1nRaj/email-armor.git#)
+- ❌ [Redeem Code with Counts](https://github.com/Capta1nRaj/email-armor.git#)
 
 ## # More Features To Be Added Later
 
-* ❌ Change password.
 * ❌ Lock User After N-Times Failed Login Attempts & Send Notification Email To The User.
 * ❌ Unlock The Locked User Account (User + Auto).
 * ❌ Add Phone Number In Accounts Model With 2 Step Verification.
