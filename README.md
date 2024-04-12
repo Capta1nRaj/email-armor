@@ -51,6 +51,7 @@ Email Armor is a Node.js/Next.js npm module that empowers you to create a robust
 - ✅ [Server Session Check](https://github.com/Capta1nRaj/email-armor.git#6-server-session-check)
 - ✅ [User Profile Pic Add](https://github.com/Capta1nRaj/email-armor.git#)
 - ✅ [User Profile Pic Remove](https://github.com/Capta1nRaj/email-armor.git#)
+- ✅ Refer history
 - ❌ [Redeem Code with Counts](https://github.com/Capta1nRaj/email-armor.git#)
 
 ## # More Features To Be Added Later
@@ -103,9 +104,7 @@ EXPIRE_JWT_TOKEN = TIME_TO_EXPIRE_THE_TOKEN
 npx email-armor init
 ```
 
-4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.
-
-   | Name                              | Type        | Usage                                  |
+4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.| Name                              | Type        | Usage                                  |
    | --------------------------------- | ----------- | -------------------------------------- |
    | RESEND_SIGN_UP_MAIL_TITLE         | String      | Custom title for sign-up confirmation. |
    | RESEND_SIGN_IN_MAIL_TITLE         | String      | Custom title for sign-in confirmation. |
@@ -305,6 +304,7 @@ return {
 | 400    | No Accounts Were Found To Verify. |
 
 ### 5. Local Session Check:
+
 If you want to check the JWT token validity or if anyone attempts to manipulate cookies, use `localSessionCheck()` to validate it. Make sure to use it only for non-sensitive data validation. For sensitive data, use [server session check](https://github.com/Capta1nRaj/email-armor.git#5-auto-user-session-check-).
 
 ### 6. Server Session Check:
@@ -394,12 +394,13 @@ const response = await resendOTP(userNameCookie, 'forgotPassword')
 ```
 
 **Bad request returns:**
-| Status | Message                                              |
-|--------|------------------------------------------------------|
-| 401    | Your device is unauthorized.                         |
-| 400    | Is this Mr. Developer or someone trying to.... uh?   |
-| 403    | Max OTP Limit Reached, Please Try After 10 Minutes.  |
-| 206    | Min. Password Length Must Be Greater Than 8.          |
+
+| Status | Message                                             |
+| ------ | --------------------------------------------------- |
+| 401    | Your device is unauthorized.                        |
+| 400    | Is this Mr. Developer or someone trying to.... uh?  |
+| 403    | Max OTP Limit Reached, Please Try After 10 Minutes. |
+| 206    | Min. Password Length Must Be Greater Than 8.        |
 
 ### 8. Resend OTP:
 
@@ -518,12 +519,12 @@ return {
 
 **Bad request returns:**
 
-| Status | Message                                                    |
-|--------|------------------------------------------------------------|
-| 401    | Your device is unauthorized.                               |
-| 401    | Is this Mr. Developer or someone trying to.... uh?         |
-| 201    | OTP Resent To The User.                                    |
-| 403    | Max OTP Limit Reached, Please Try After 10 Minutes.        |
+| Status | Message                                             |
+| ------ | --------------------------------------------------- |
+| 401    | Your device is unauthorized.                        |
+| 401    | Is this Mr. Developer or someone trying to.... uh?  |
+| 201    | OTP Resent To The User.                             |
+| 403    | Max OTP Limit Reached, Please Try After 10 Minutes. |
 
 ### 9. Custom Email Template:
 

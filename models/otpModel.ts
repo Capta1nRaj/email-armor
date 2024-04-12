@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 mongoose.set('autoCreate', false);
 
-const otpSchema = new mongoose.Schema({
+const OTPSchema = new mongoose.Schema({
     userName: {
         type: String,
         required: true
@@ -23,6 +23,6 @@ const otpSchema = new mongoose.Schema({
     timestamps: true
 });
 
-otpSchema.index({ userName: 1 }); // Creating a index on inviteCode
+OTPSchema.index({ userName: 1 }); // Creating an index on userName
 
-export default mongoose.models.OTP || mongoose.model("OTP", otpSchema);
+export default mongoose.models.OTP || mongoose.model("OTP", OTPSchema);

@@ -44,6 +44,10 @@ const dynamicAccountsModel = (modelName = 'accounts') => {
             type: Boolean,
             default: false,
         },
+        userBanned: {
+            type: Boolean,
+            default: false,
+        },
         points: {
             type: Number,
             default: 0,
@@ -105,7 +109,6 @@ const dynamicAccountsModel = (modelName = 'accounts') => {
     AccountsSchema.index({ userEmail: 1 }, { unique: true }); // Creating a unique index on userEmail
     AccountsSchema.index({ userReferralCode: 1 }, { unique: true }); // Creating a unique index on userReferralCode
     AccountsSchema.index({ userReferredBy: 1 }); // Creating an index on referredBy
-    AccountsSchema.index({ userMobileNumber: 1 }); // Creating an index on userMobileNumber
 
     return mongoose.models[modelName] || mongoose.model(modelName, AccountsSchema);
 };
