@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import inquirer from 'inquirer';
+import path from 'path';
 
 import { connect2MongoDB } from 'connect2mongodb';
 import settingsModel from '../models/settingsModel.js';
@@ -14,8 +15,21 @@ const emailTemplate = fs.readFileSync(new URL('../src/EmailTemplates/email-templ
 const addAUserEmailTemplate = fs.readFileSync(new URL('../src/EmailTemplates/add-a-user-email-template.html', import.meta.url), 'utf8');
 
 //* Running a prompt that whether the user wants to add user creation feature or not
-async function promptUser() {
+async function promptForAddUserCreationFeature() {
     const message = 'Would you like to add user creation features? For more details, read more: https://www.example.com';
+    return inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'confirmation',
+            message: message,
+            default: false
+        }
+    ]);
+}
+
+//* Running a prompt that whether the user wants schema files or not
+async function promptForUserToGetSchemaFiles() {
+    const message = 'Would you like to get all the Schema file? For more details, read more: https://www.example.com';
     return inquirer.prompt([
         {
             type: 'confirm',
@@ -34,7 +48,8 @@ async function executeOperationsBasedOnConfirmation() {
 
     //*  If any the the above files not exist, will run the prompt & ask user to add user creation feature or not
     if (!checkIfFileExistOrNot || !checkEmailTemplateFile) {
-        const answers = await promptUser();
+        const answer1 = await promptForAddUserCreationFeature();
+        const answer2 = await promptForUserToGetSchemaFiles();
 
         const s = ora({
             text: "Building....",
@@ -48,20 +63,41 @@ async function executeOperationsBasedOnConfirmation() {
 
         //* If user says yes, it will generate a add-a-user-email-template.html
         //* Else if will execute the common functions 
-        if (answers.confirmation) {
-            await generatingAddAUserEmailTemplate();
-        }
+        if (answer1.confirmation) { await generatingAddAUserEmailTemplate(); };
+
+        //! If user wants Schema files 
+        if (answer2.confirmation) { await generateSchemaFiles(); };
     }
 
     console.log("Configuration file successfully updated.");
     await runStepByStep();
 }
 
-async function generateFileIfNotExists(filename: string, content: string) {
-    if (!fs.existsSync(filename)) {
-        fs.writeFileSync(filename, content);
-        console.log(`${filename} generated successfully.`);
+//! Generate files if not exist
+async function generateFileIfNotExists(filename: string, content: string, folderPath?: string) {
+    const filePath = path.resolve(folderPath || "", filename);
+
+    //! Ensure directory exists
+    const directory = path.dirname(filePath);
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
     }
+
+    if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, content);
+        console.log(`${filePath} generated successfully.`);
+    }
+}
+
+//! Provide Schema files to user workspace
+async function generateSchemaFiles() {
+    const modelFiles = ['accountsModel.ts', 'otpModel.ts', 'referHistoryModel.ts', 'sessionsModel.ts', 'settingsModel.ts'];
+
+    modelFiles.forEach(async (filename) => {
+        const filePath = path.resolve('../models', filename);
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        generateFileIfNotExists(filename, fileContent, 'models');
+    });
 }
 
 //! Generating .json file 
@@ -161,20 +197,20 @@ async function updateAddAUserEmailTemplate() {
     }
 }
 
-
 //! Running all the functions step by step 
 async function runStepByStep() {
-    // Connection to MongoDB
+    //! Connection to MongoDB
     await connect2MongoDB();
 
-    // Running the functions
+    //! Running the functions
     await generateConfigFile();
+    await generateSchemaFiles();
     await generatingEmailTemplate();
     await updatePoints();
     await updateEmailTemplate();
     await updateAddAUserEmailTemplate();
 
-    // Exiting the process
+    //! Exiting the process
     process.exit();
 }
 

@@ -14,7 +14,8 @@
     "test": "npm run build && cd ./test && nodemon index.js",
     "publishBeta":"npm run build && npm publish --tag beta",
     "readme": "git add . && git commit -m \"README.md updated\" && git push",
-    "link":"npm run build && cd ./test && npm link email-armor"
+    "link":"npm run build && cd ./test && npm link email-armor",
+    "npx": "npm run build && cd ./test && npx email-armor init"
   },
   "repository": {
     "type": "git",

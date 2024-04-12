@@ -49,9 +49,8 @@ Email Armor is a Node.js/Next.js npm module that empowers you to create a robust
 - ✅ [Change password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#)
 - ✅ [Local Session Check](https://github.com/Capta1nRaj/email-armor.git#5-local-sessions-check)
 - ✅ [Server Session Check](https://github.com/Capta1nRaj/email-armor.git#6-server-session-check)
-- ✅ [User Profile Pic Add](https://github.com/Capta1nRaj/email-armor.git#)
-- ✅ [User Profile Pic Remove](https://github.com/Capta1nRaj/email-armor.git#)
-- ✅ Refer history
+- ✅ [User Profile Pic Add & Remove](https://github.com/Capta1nRaj/email-armor.git#)
+- ✅ [Refer history](https://github.com/Capta1nRaj/email-armor.git#)
 - ❌ [Redeem Code with Counts](https://github.com/Capta1nRaj/email-armor.git#)
 
 ## # More Features To Be Added Later
