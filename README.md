@@ -39,7 +39,7 @@ Email Armor is a Node.js/Next.js npm module that empowers you to create a robust
 - ✅ [Compatible with Next.js.](https://nextjs.org/)
 - ✅ [Compatible with Node.js.](https://nodejs.org/)
 - ✅ [Custom Mail Template.](https://github.com/Capta1nRaj/email-armor.git#9-custom-email-template)
-- ✅ [Sign-Up With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#1-sign-up)
+- ✅ [Sign-Up With Two-Step Verification &amp; Add User Roles](https://github.com/Capta1nRaj/email-armor.git#1-sign-up)
 - ✅ [Sign-In With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#3-sign-in)
 - ✅ [Passwords Are Encrypted With Crypto.](https://nodejs.org/api/crypto.html)
 - ✅ [Referral System.](https://github.com/Capta1nRaj/email-armor.git#installation)
@@ -49,7 +49,7 @@ Email Armor is a Node.js/Next.js npm module that empowers you to create a robust
 - ✅ [Change password With Two-Step Verification.](https://github.com/Capta1nRaj/email-armor.git#)
 - ✅ [Local Session Check](https://github.com/Capta1nRaj/email-armor.git#5-local-sessions-check)
 - ✅ [Server Session Check](https://github.com/Capta1nRaj/email-armor.git#6-server-session-check)
-- ✅ [User Profile Pic Add & Remove](https://github.com/Capta1nRaj/email-armor.git#)
+- ✅ [User Profile Pic Add &amp; Remove](https://github.com/Capta1nRaj/email-armor.git#)
 - ✅ [Refer history](https://github.com/Capta1nRaj/email-armor.git#)
 - ❌ [Redeem Code with Counts](https://github.com/Capta1nRaj/email-armor.git#)
 
@@ -130,11 +130,11 @@ const data = {fullName, userName, emailID, password, referralCode};
 const response = await axios.post('YOUR_URL', data);
 ```
 
-Next, configure the sign-up module on the Back-End:
+Next, configure the sign-up module on the back end. The u**serRole** can be set according to your preference, whether on the backend or frontend, & static or dynamic.
 
 ```js
 import signup from "email-armor";
-const response = await signup(fullName, userName, emailID, password, referralCode);
+const response = await signup(fullName, userName, emailID, password, referralCode, userAgent, userIP, userRole);
 console.log(response);
 ```
 

@@ -25,7 +25,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
     saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
-async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userIP: string) {
+async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userIP: string, userRole: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
@@ -113,6 +113,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
             userPassword: encryptedPassword,
             userReferralCode: userReferralCode,
             userReferredBy: referredByUser.userName || "",
+            userRole: userRole || ""
         }).save();
 
         // Generate And Securing an OTP
