@@ -1,6 +1,6 @@
 {
   "name": "email-armor",
-  "version": "0.0.84-beta.0",
+  "version": "0.0.85-beta.0",
   "description": "Custom email and password authentication with two-step verification via Resend.com.",
   "main": "lib/index.js",
   "type": "module",

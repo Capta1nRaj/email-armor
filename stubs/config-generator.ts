@@ -69,7 +69,7 @@ async function executeOperationsBasedOnConfirmation() {
         if (answer2.confirmation) { await generateSchemaFiles(); };
     }
 
-    console.log("Configuration file successfully updated.");
+    console.log("\n Configuration file successfully updated.");
     await runStepByStep();
 }
 
@@ -91,12 +91,11 @@ async function generateFileIfNotExists(filename: string, content: string, folder
 
 //! Provide Schema files to user workspace
 async function generateSchemaFiles() {
-    const modelFiles = ['accountsModel.ts', 'otpModel.ts', 'referHistoryModel.ts', 'sessionsModel.ts', 'settingsModel.ts'];
+    const modelFiles = ['accountsModel', 'otpModel', 'referHistoryModel', 'sessionsModel', 'settingsModel'];
 
     modelFiles.forEach(async (filename) => {
-        const filePath = path.resolve('../models', filename);
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        generateFileIfNotExists(filename, fileContent, 'models');
+        const filePath = fs.readFileSync(new URL(`../models/${filename}.js`, import.meta.url), 'utf8');
+        generateFileIfNotExists(filename + ".ts", filePath, 'email-armor-models');
     });
 }
 
@@ -204,7 +203,6 @@ async function runStepByStep() {
 
     //! Running the functions
     await generateConfigFile();
-    await generateSchemaFiles();
     await generatingEmailTemplate();
     await updatePoints();
     await updateEmailTemplate();
