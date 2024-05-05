@@ -84,8 +84,9 @@ npm i cookies-next
 
 ```js
 MONGODB_URI = YOUR_MONGODB_URI (mongodb://127.0.0.1:27017/DB-NAME)
-RESEND_API_KEY = YOUR_RESEND_API_KEY
-RESEND_EMAIL_ID = YOUR_RESEND_EMAIL_ID
+NODEMAILER_USERNAME = YOUR_NODEMAIL_EMAIL
+NODEMAILER_PASSWORD = YOUR_NODEMAIL_PASSWORD
+NODEMAILER_MAIL_FROM = YOUR_NODEMAIL_FROM
 ALLOWED_EMAIL_DOMAINS = @gmail.com,@hotmail.com {YOU_CAN_ADD_MORE_BY_SEPERATING_WITH_,(comma)}
 ACCOUNTS_MODEL_NAME = MODEL_NAME_FOR_YOU_ACCOUNTS_COLLECTION
 BCRYPT_SALT_ROUNDS = ENTER_ANY_VALUE_BETWEEN-8-12
@@ -103,7 +104,8 @@ EXPIRE_JWT_TOKEN = TIME_TO_EXPIRE_THE_TOKEN
 npx email-armor init
 ```
 
-4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.| Name                              | Type        | Usage                                  |
+4. This will generate 2 files ``email-armor.json`` & ``email-template.html`` files. In ``email-armor.json`` file, you can configure your data. Please ensure that you maintain the variables in the JSON file as specified below.
+   | Name                              | Type        | Usage                                  |
    | --------------------------------- | ----------- | -------------------------------------- |
    | RESEND_SIGN_UP_MAIL_TITLE         | String      | Custom title for sign-up confirmation. |
    | RESEND_SIGN_IN_MAIL_TITLE         | String      | Custom title for sign-in confirmation. |

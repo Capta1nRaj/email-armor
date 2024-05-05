@@ -85,7 +85,7 @@ async function generateFileIfNotExists(filename: string, content: string, folder
 
     if (!fs.existsSync(filePath)) {
         fs.writeFileSync(filePath, content);
-        console.log(`${filePath} generated successfully.`);
+        console.log(`\n ${filePath} generated successfully.`);
     }
 }
 

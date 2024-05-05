@@ -1,19 +1,20 @@
 // Import necessary modules and set up environment variables
-import { config } from 'dotenv';
-config();
-
-import { Resend } from 'resend';
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-import settingsModel from '../../models/settingsModel.js';
+import nodemailer from 'nodemailer';
 import { connect2MongoDB } from 'connect2mongodb';
+import settingsModel from '../../models/settingsModel.js';
 
-// Check if RESEND_API_KEY is defined
-if (!process.env.RESEND_API_KEY || !process.env.RESEND_EMAIL_ID) {
-  throw new Error("RESEND_API_KEY or RESEND_EMAIL_ID is not defined in your environment variables.");
-}
+//! Nodemailer auth settings 
+const auth = nodemailer.createTransport({
+  service: "gmail",
+  secure: true,
+  port: 465,
+  auth: {
+    user: process.env.NODEMAILER_USERNAME,
+    pass: process.env.NODEMAILER_PASSWORD
+  }
+});
 
-// Define type for email titles
+//! Define type for email titles
 type EmailTitles = {
   signUp: string;
   signIn: string;
@@ -24,13 +25,12 @@ type EmailTitles = {
 
 async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword: any, functionPerformed: keyof EmailTitles, userIP: any, userAgent: string) {
 
-  //! Checking if user is trying to hit the API with a software like Postman
-  if (!userAgent) {
-    return {
-      status: 401,
-      message: "Your device is unauthorized."
-    };
+  if (!process.env.NODEMAILER_USERNAME || !process.env.NODEMAILER_PASSWORD || !process.env.NODEMAILER_MAIL_FROM) {
+    throw new Error("Missing environment variables: NODEMAILER_USERNAME, NODEMAILER_PASSWORD, NODEMAILER_MAIL_FROM");
   }
+
+  //! Checking if user is trying to hit the API with a software like Postman
+  if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
   // Connection to MongoDB
   await connect2MongoDB();
@@ -59,13 +59,19 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
     .replaceAll('{{userIP}}', userIP)
     .replaceAll('{{userAgent}}', userAgent)
 
-  // Generate and send mail via Resend
-  const data = await resend.emails.send({
-    from: process.env.RESEND_EMAIL_ID as string,
+  // Generate and send mail via Nodemailer
+  const receiver = {
+    from: process.env.NODEMAILER_MAIL_FROM + process.env.NODEMAILER_USERNAME,
     to: userEmail,
     subject: emailTitle,
     html: replacedHtml,
-  });
+  };
+
+  try {
+    await auth.sendMail(receiver);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export default sendOTPToUser;
