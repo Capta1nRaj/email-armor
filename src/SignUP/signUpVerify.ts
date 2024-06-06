@@ -42,16 +42,16 @@ async function signUpVerify(username: string, otp: string) {
         // It Will Find The New User's username, And As Per The Document, If The User Entered The Correct Referral Code, They Will Receive (Referred_points As Per The Json File) Points From The Referrer And Get Added To The Referrer's List With Their Name.
         // The Referrer Gets (Referred_person_points As Per The Json File) Points. 
         // If The User Didn't Enter Any Referral Code, Then They Will Not Get Any Points.
-        const getTheUserWhomHeGotReferred = await accountsModel.findOne({ userName: getUserDetailsAndOTP.userName }).select('userName userReferredBy');
+        const referredUserData = await accountsModel.findOne({ userName: getUserDetailsAndOTP.userName }).select('userName userReferredBy');
 
         // If User Is Referred By None
-        if (getTheUserWhomHeGotReferred.userReferredBy.length === 0) {
+        if (!referredUserData.userReferredBy) {
 
             // It Will Simply Verify The User's Account.
             await accountsModel.updateOne({ userName: username.toLowerCase() }, { $set: { userVerified: true }, $inc: { points: 0 } }, { new: true });
 
             // If User Is Referred By Someone
-        } else if (getTheUserWhomHeGotReferred.userReferredBy.length !== 0) {
+        } else {
 
             // It Will Fetch Settings, & Get The Points Values From The DB
             const fetchSettings = await settingsModel.findOne({}).select('referred_person_points referred_points');
@@ -63,16 +63,16 @@ async function signUpVerify(username: string, otp: string) {
             // Secondly, It Will Update The Points For The User (REFERRED_POINTS As Per JSON File) Who Referred Them And Add The User's userName To The Referrer's List
             // It Will User The Referral Code To Find The User Who Referred A New User
             //!  Guy who referred
-            const guyWhoReferred = await accountsModel.findOneAndUpdate(
-                { userName: getTheUserWhomHeGotReferred.userReferredBy },
-                { $addToSet: { userReferrals: getTheUserWhomHeGotReferred.userName }, $inc: { points: fetchSettings.referred_points } },
+            const referralUserData = await accountsModel.findOneAndUpdate(
+                { userName: referredUserData.userReferredBy },
+                { $addToSet: { userReferrals: referredUserData.userName }, $inc: { points: fetchSettings.referred_points } },
                 { new: true }
             ).select('userName');
 
             //! Adding the referred points history in the DB for future use if needed by the organization
             const referHistoryData = [
-                { userName: guyWhoReferred.userName, points: fetchSettings.referred_points, reason: "Referred to " + username.toLowerCase() },
-                { userName: username.toLowerCase(), points: fetchSettings.referred_person_points, reason: "Referred by " + guyWhoReferred.userName }
+                { userName: referralUserData._id, points: fetchSettings.referred_points, reason: "Referred to " + username.toLowerCase() + "." },
+                { userName: referredUserData._id, points: fetchSettings.referred_person_points, reason: "Referred by " + referralUserData.userName + "." }
             ];
             await referHistoryModel.insertMany(referHistoryData);
         }

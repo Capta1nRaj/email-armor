@@ -12,9 +12,7 @@ const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
 import dynamicAccountsModel from "../../models/accountsModel.js";
 var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
-    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
-}
+if (process.env.ACCOUNTS_MODEL_NAME !== undefined) { accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME); }
 
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
@@ -28,12 +26,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userIP: string, userRole: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
-    if (!userAgent) {
-        return {
-            status: 401,
-            message: "Your device is unauthorized."
-        };
-    }
+    if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
     try {
 
@@ -64,12 +57,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         }
 
         // If User Passowrd Length Is Lesser Than 8, Throw An Error
-        if (userPassword.length <= 8) {
-            return {
-                status: 206,
-                message: "Min. Password Length Must Be Greater Than 8.",
-            };
-        }
+        if (userPassword.length <= 8) { return { status: 206, message: "Min. Password Length Must Be Greater Than 8.", }; }
 
         await connect2MongoDB();
 
@@ -79,14 +67,8 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // If User Exist, Notify The Client With The Following Message Depending On The Case
         if (existingUser) {
             let message = "";
-            if (existingUser.userName === userName.toLowerCase()) {
-                message += "Username already exists.";
-                return { status: 400, message };
-            }
-            if (existingUser.userEmail === userEmail.toLowerCase()) {
-                message += "Email ID already exists.";
-                return { status: 400, message };
-            }
+            if (existingUser.userName === userName.toLowerCase()) { message += "Username already exists."; return { status: 400, message }; }
+            if (existingUser.userEmail === userEmail.toLowerCase()) { message += "Email ID already exists."; return { status: 400, message }; }
         }
 
         // Checking If User Entered A Referral Code Or Not
@@ -120,7 +102,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const userOTP = await randomStringGenerator(6);
         const encryptedOTP = await bcrypt.hash(userOTP, saltRounds)
 
-        // Send Un-Secured OTP To The User Registered E-Mail
+        // Send Unsecured OTP To The User Registered E-Mail
         await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP, userAgent);
 
         // Saving Secured OTP to DB
@@ -142,9 +124,7 @@ async function generatingUserReferralCode() {
     const existingCode = await accountsModel.exists({ userReferralCode });
 
     // If Referral Code Exists, Regenerate New Code
-    if (existingCode) {
-        return generatingUserReferralCode();
-    }
+    if (existingCode) { return generatingUserReferralCode(); }
     return userReferralCode;
 }
 

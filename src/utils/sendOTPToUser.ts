@@ -61,7 +61,7 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
 
   // Generate and send mail via Nodemailer
   const receiver = {
-    from: process.env.NODEMAILER_MAIL_FROM + process.env.NODEMAILER_USERNAME,
+    from: process.env.NODEMAILER_MAIL_FROM + "<" + process.env.NODEMAILER_USERNAME + ">",
     to: userEmail,
     subject: emailTitle,
     html: replacedHtml,

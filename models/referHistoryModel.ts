@@ -3,7 +3,8 @@ mongoose.set('autoCreate', false);
 
 const ReferHistorySchema = new mongoose.Schema({
     userName: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: process.env.ACCOUNTS_MODEL_NAME || "accounts"
     },
     points: {
         type: Number,
