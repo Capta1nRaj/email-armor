@@ -24,7 +24,6 @@ function getEnvVariable(key: string): string {
 // Retrieve environment variables
 const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
 let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
-
 if (expireJwtToken === '0') { expireJwtToken = null }
 
 async function signInVerify(username: string, otp: string, id: string, userAgent: string) {
@@ -61,14 +60,15 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
             // Encrypting jwtToken
             const encryptedJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
 
-            // This Will Update userVerified To True, Update ExpireAt After 1 Month, Remove OTP & OTPCount Fields Too
+            // This Will Update userVerified To True, Update ExpireAt After 1 Year, Remove OTP & OTPCount Fields Too
             await sessionsModel.updateOne({ _id: id },
                 {
                     userVerified: true, $unset: { OTP: 1, OTPCount: 1 },
-                    $set: { expireAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
+                    $set: { expireAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) },
                     jwtToken: encryptedJWTToken
                 },
-                { new: true })
+                { new: true }
+            )
 
             // Sending JWT Token to user
             return { status: 202, message: "Account Verified.", signedJWTToken }

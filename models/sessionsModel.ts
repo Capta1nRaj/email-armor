@@ -17,8 +17,7 @@ const SessionsSchema = new mongoose.Schema({
         type: String,
     },
     OTP: {
-        type: String,
-        required: true
+        type: String
     },
     OTPCount: {
         type: Number,
@@ -27,7 +26,7 @@ const SessionsSchema = new mongoose.Schema({
     expireAt: {
         type: Date,
         default: Date.now,
-        expires: 300
+        expires: 600
     },
 }, {
     timestamps: true

@@ -4,6 +4,7 @@ config();
 import { connect2MongoDB } from "connect2mongodb";
 import otpModel from '../../models/otpModel.js';
 import settingsModel from '../../models/settingsModel.js';
+import referHistoryModel from '../../models/referHistoryModel.js';
 
 //! Generating A Dynamic Account Model Name If User Needs
 //! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
@@ -15,9 +16,33 @@ if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
 
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
-import referHistoryModel from '../../models/referHistoryModel.js';
+let saltRounds: number;
+if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
+    throw new Error("saltRounds is either undefined or a valid number")
+} else {
+    saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
+}
 
-async function signUpVerify(username: string, otp: string) {
+//! Checking if JWT_TOKEN_VALUE is a defined or not
+//! Checking if EXPIRE_JWT_TOKEN value is a defined or not
+import jwt from 'jsonwebtoken';
+import sessionsModel from '../../models/sessionsModel.js';
+function getEnvVariable(key: string): string {
+    const value = process.env[key];
+    if (value === undefined || value.length === 0) {
+        throw new Error(`${key} is undefined.`);
+    }
+    return value;
+}
+
+// Retrieve environment variables
+const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
+let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
+if (expireJwtToken === '0') { expireJwtToken = null }
+async function signUpVerify(username: string, otp: string, userAgent: string) {
+
+    //! Checking if user is trying to hit the API with a software like Postman
+    if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
     try {
 
@@ -77,7 +102,31 @@ async function signUpVerify(username: string, otp: string) {
             await referHistoryModel.insertMany(referHistoryData);
         }
 
-        return { status: 202, message: "Account Verified" }
+        // Encrypting userAgent
+        const encryptedUserAgent = await bcrypt.hash(userAgent, saltRounds)
+
+        // JWT Token data
+        const jwtData = {
+            userName: username,
+            userAgent: encryptedUserAgent
+        }
+
+        // Signing JWT Token with jwtTokenValue & expiry date
+        const signOptions = expireJwtToken ? { expiresIn: expireJwtToken } : undefined;
+        const signedJWTToken = jwt.sign(jwtData, jwtTokenValue, signOptions);
+
+        // Encrypting jwtToken
+        const encryptedJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
+
+        // Store a session model to DB, & it will expire after 1 year
+        const sessionToken = await new sessionsModel({
+            userName: username,
+            userAgent: userAgent,
+            jwtToken: encryptedJWTToken,
+            expireAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        }).save();
+
+        return { id: sessionToken._id, userName: sessionToken.userName.toLowerCase(), signedJWTToken, status: 202, message: "Account Verified" }
 
     } catch (error) {
         console.log(error)
