@@ -8,16 +8,9 @@ import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import settingsModel from "../../models/settingsModel.js";
 
-//! Generating A Dynamic Account Model Name If User Needs
-//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.js";
-var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
-    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
-}
-
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
+import userAccountsModel from '../../models/userAccountsModel.js';
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -38,7 +31,7 @@ async function signIn(username: string, userPassword: string | boolean, userAgen
     await connect2MongoDB();
 
     // Finding If User Exist Or Not From DB
-    const findUserToLogin = await accountsModel.findOne({ userName: username.toLowerCase() }).select('userVerified userName userEmail userPassword');
+    const findUserToLogin = await userAccountsModel.findOne({ userName: username.toLowerCase() }).select('userVerified userName userEmail userPassword');
 
     // If userName Don't Exist, Return A Bad Request
     if (!findUserToLogin) {

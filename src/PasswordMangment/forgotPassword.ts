@@ -4,16 +4,9 @@ import sendOTPToUser from "../utils/sendOTPToUser.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import settingsModel from "../../models/sessionsModel.js";
 
-//! Generating A Dynamic Account Model Name If User Needs
-//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.js";
-var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
-    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
-}
-
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
+import userAccountsModel from "../../models/userAccountsModel.js";
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -48,7 +41,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
             await connect2MongoDB();
 
             // First We Find If User Exist Or Not
-            const finduserAndSendEmailForVerification = await accountsModel.findOne({ userName: username.toLowerCase() }).select('userName userEmail OTP');
+            const finduserAndSendEmailForVerification = await userAccountsModel.findOne({ userName: username.toLowerCase() }).select('userName userEmail OTP');
 
             // If Not, Client Will Receive This Response
             if (finduserAndSendEmailForVerification === null) {
@@ -170,7 +163,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
 
                 const encryptedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-                await accountsModel.updateOne({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true });
+                await userAccountsModel.updateOne({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true });
 
                 await otpModel.deleteOne({ userName: username.toLowerCase() });
 

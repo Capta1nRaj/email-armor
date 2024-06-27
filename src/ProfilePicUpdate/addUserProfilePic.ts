@@ -1,13 +1,6 @@
 import { connect2MongoDB } from "connect2mongodb";
 import serverSessionCheck from "../SessionCheck/serverSessionCheck.js";
-
-//! Generating A Dynamic Account Model Name If User Needs
-//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.js";
-var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
-    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
-}
+import userAccountsModel from "../../models/userAccountsModel.js";
 
 async function addUserProfilePic(userName: string, id: string, jwtToken: string, userAgent: string, imageLink: string) {
     try {
@@ -28,7 +21,7 @@ async function addUserProfilePic(userName: string, id: string, jwtToken: string,
         await connect2MongoDB();
 
         //! Adding imageLink in the user document
-        const returnOldImageLink = await accountsModel.findOneAndUpdate({ userName: userName.toLowerCase() }, { userProfilePic: imageLink }).select('userProfilePic');
+        const returnOldImageLink = await userAccountsModel.findOneAndUpdate({ userName: userName.toLowerCase() }, { userProfilePic: imageLink }).select('userProfilePic');
 
         return { status: 200, message: "Image uploaded successfully.", oldImageLink: returnOldImageLink.userProfilePic || "" };
 

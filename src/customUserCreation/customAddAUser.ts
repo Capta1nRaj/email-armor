@@ -10,16 +10,9 @@ import sendOTPToUser from "../utils/sendOTPToUser.js";
 
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 
-//! Generating A Dynamic Account Model Name If User Needs
-//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.js";
-var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
-    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
-}
-
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
+import userAccountsModel from '../../models/userAccountsModel.js';
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -69,7 +62,7 @@ async function customAddAUser(adminName: string, userFullName: string, userName:
         await connect2MongoDB();
 
         // Checking If UserName & EmailId Already Exists In DB Or Not
-        const existingUser = await accountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
+        const existingUser = await userAccountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
 
         // If User Exist, Notify The Client With The Following Message Depending On The Case
         if (existingUser) {
@@ -94,7 +87,7 @@ async function customAddAUser(adminName: string, userFullName: string, userName:
         const encryptedPassword = await bcrypt.hash(userPassword, saltRounds);
 
         // Checking if the admin exist in DB or someone trying to manipulate the data
-        const userAddedBy = await accountsModel.findOne({ userName: adminName }).select('userName');
+        const userAddedBy = await userAccountsModel.findOne({ userName: adminName }).select('userName');
 
         // If admin not found, throw this error
         if (userAddedBy === null) {
@@ -102,7 +95,7 @@ async function customAddAUser(adminName: string, userFullName: string, userName:
         }
 
         // Save New User Details To DB
-        await new accountsModel({
+        await new userAccountsModel({
             userFullName,
             userName: userName.toLowerCase(),
             userEmail: userEmail.toLowerCase(),
@@ -122,7 +115,7 @@ async function customAddAUser(adminName: string, userFullName: string, userName:
         }).save();
 
         // Updating the admin's userReferrals field with the user's userName he added
-        await accountsModel.updateOne({ userName: adminName }, { $addToSet: { userReferrals: userName } });
+        await userAccountsModel.updateOne({ userName: adminName }, { $addToSet: { userReferrals: userName } });
 
         // Here user will get an email with the password regarding that he is added to the management.
         await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userPassword, 'addAUser', userIP, userAgent);
@@ -139,7 +132,7 @@ async function generatingUserReferralCode(number: number) {
     const userReferralCode = await randomStringGenerator(number);
 
     // Check If Code Already Exist In DB Or Not
-    const existingCode = await accountsModel.exists({ userReferralCode });
+    const existingCode = await userAccountsModel.exists({ userReferralCode });
 
     // If Referral Code Exists, Regenerate New Code
     if (existingCode) {

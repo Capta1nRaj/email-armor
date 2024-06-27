@@ -3,14 +3,8 @@ import otpModel from "../../models/otpModel.js";
 import settingsModel from "../../models/settingsModel.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 
-//! Generating A Dynamic Account Model Name If User Needs
-//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.js";
+import userAccountsModel from "../../models/userAccountsModel.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
-var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
-    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
-}
 
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
@@ -39,7 +33,7 @@ async function changePassword(userName: string, id: string, jwtToken: string, us
         //* So we will find if ID exist or not, then, we will send the OTP
         if (!userOTP) {
             //! Finding If User Exist Or Not From DB
-            const findUser = await accountsModel.findOne({ userName: userName.toLowerCase() }).select('userEmail userPassword');
+            const findUser = await userAccountsModel.findOne({ userName: userName.toLowerCase() }).select('userEmail userPassword');
 
             //! If userName Don't Exist, Return A Bad Request 
             if (!findUser) { return { status: 400, message: "Please Validate Your Details.", }; }
@@ -96,7 +90,7 @@ async function changePassword(userName: string, id: string, jwtToken: string, us
         if (!compareOTP) { return { status: 400, message: "Wrong OTP" } }
 
         //* If OTP Is True, then, find & compare the oldPassword of the client, & if it's valid, then, update the newPassword
-        const fetchOldPassword = await accountsModel.findOne({ userName: userName.toLowerCase() }).select('userPassword');
+        const fetchOldPassword = await userAccountsModel.findOne({ userName: userName.toLowerCase() }).select('userPassword');
 
         //! Comparing the oldPassword
         const compareOldPassword = await bcrypt.compare(oldPassword, fetchOldPassword.userPassword);
@@ -108,7 +102,7 @@ async function changePassword(userName: string, id: string, jwtToken: string, us
         const encryptedPassword = await bcrypt.hash(newPassword, saltRounds)
 
         //* If oldPassword is True, then, hash & update the newPassword to the DB, & delete the OTP
-        await accountsModel.updateOne({ userName: userName.toLowerCase() }, { userPassword: encryptedPassword })
+        await userAccountsModel.updateOne({ userName: userName.toLowerCase() }, { userPassword: encryptedPassword })
         await otpModel.deleteOne({ userName: userName.toLowerCase() });
 
         return { status: 200, message: "Password updated successfully!" };

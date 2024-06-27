@@ -9,16 +9,9 @@ import sendOTPToUser from "../utils/sendOTPToUser.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import settingsModel from "../../models/settingsModel.js";
 
-//! Generating A Dynamic Account Model Name If User Needs
-//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.js";
-var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) {
-    accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME);
-}
-
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
+import userAccountsModel from '../../models/userAccountsModel.js';
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -77,7 +70,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         await otpModel.updateOne({ userName }, { OTP: encryptedOTP, $inc: { OTPCount: 1 } });
 
         // Finding The User Email Via userName In The DB
-        const findUserAndSendEmail = await accountsModel.findOne({ userName }).select('userEmail');
+        const findUserAndSendEmail = await userAccountsModel.findOne({ userName }).select('userEmail');
 
         // Sending OTP To User
         await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signUp', userIP, userAgent);
@@ -129,7 +122,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
                 await findUserSessionViaID.save();
 
                 // Finding The Email Of The User
-                const findUserAndSendEmail = await accountsModel.findOne({ userName }).select('userEmail');
+                const findUserAndSendEmail = await userAccountsModel.findOne({ userName }).select('userEmail');
 
                 // Sending The OTP To The User
                 await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'signIn', userIP, userAgent);
@@ -194,7 +187,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         await findIfUserNameExistBeforeSending.save();
 
         // Finding userEmail Via userName
-        const findUserAndSendEmail = await accountsModel.findOne({ userName }).select('userEmail');
+        const findUserAndSendEmail = await userAccountsModel.findOne({ userName }).select('userEmail');
 
         // Sending OTP To User
         await sendOTPToUser(userName, findUserAndSendEmail.userEmail, userOTP, 'forgotPassword', userIP, userAgent);

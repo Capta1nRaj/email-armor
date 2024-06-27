@@ -8,14 +8,9 @@ import sendOTPToUser from "../utils/sendOTPToUser.js";
 
 const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
 
-//! Generating A Dynamic Account Model Name If User Needs
-//! If User Wants A Dynamic Model, Then, Add ACCOUNT_MODEL_NAME & Your Model Name
-import dynamicAccountsModel from "../../models/accountsModel.js";
-var accountsModel = dynamicAccountsModel();
-if (process.env.ACCOUNTS_MODEL_NAME !== undefined) { accountsModel = dynamicAccountsModel(process.env.ACCOUNTS_MODEL_NAME); }
-
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
+import userAccountsModel from '../../models/userAccountsModel.js';
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -62,7 +57,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         await connect2MongoDB();
 
         // Checking If UserName & EmailId Already Exists In DB Or Not
-        const existingUser = await accountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
+        const existingUser = await userAccountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
 
         // If User Exist, Notify The Client With The Following Message Depending On The Case
         if (existingUser) {
@@ -74,7 +69,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // Checking If User Entered A Referral Code Or Not
         // If Entered, Check That It Exist Or Not
         // If Not Entered, Set As ''
-        const referredByUser = userReferredBy.length > 0 ? await accountsModel.findOne({ userReferralCode: userReferredBy }).select('userName') : '';
+        const referredByUser = userReferredBy.length > 0 ? await userAccountsModel.findOne({ userReferralCode: userReferredBy }).select('userName') : '';
 
         // If User Entered Wrong Referral Code, Return The Error
         if (referredByUser === null) {
@@ -88,7 +83,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const encryptedPassword = await bcrypt.hash(userPassword, saltRounds)
 
         // Save New User Details To DB
-        await new accountsModel({
+        await new userAccountsModel({
             userFullName,
             userName: userName.toLowerCase(),
             userEmail: userEmail.toLowerCase(),
@@ -121,7 +116,7 @@ async function generatingUserReferralCode() {
     const userReferralCode = await randomStringGenerator(6);
 
     // Check If Code Already Exist In DB Or Not
-    const existingCode = await accountsModel.exists({ userReferralCode });
+    const existingCode = await userAccountsModel.exists({ userReferralCode });
 
     // If Referral Code Exists, Regenerate New Code
     if (existingCode) { return generatingUserReferralCode(); }
