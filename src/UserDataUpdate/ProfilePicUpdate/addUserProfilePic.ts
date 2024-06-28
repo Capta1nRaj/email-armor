@@ -1,8 +1,8 @@
 import { connect2MongoDB } from "connect2mongodb";
-import serverSessionCheck from "../SessionCheck/serverSessionCheck.js";
-import userAccountsModel from "../../models/userAccountsModel.js";
+import userAccountsModel from "../../../models/userAccountsModel.js";
+import serverSessionCheck from "../../SessionCheck/serverSessionCheck.js";
 
-async function removeProfilePic(userName: string, id: string, jwtToken: string, userAgent: string) {
+async function addUserProfilePic(userName: string, id: string, jwtToken: string, userAgent: string, imageLink: string) {
     try {
 
         //! Checking if user is trying to hit the API with a software like Postman
@@ -10,6 +10,8 @@ async function removeProfilePic(userName: string, id: string, jwtToken: string, 
 
         //! Checking If userName Is Passed By Client Or Not
         if (!userName || !id || !jwtToken) { return { status: 400, message: "Session doesn't exist.", }; }
+
+        if (!imageLink) { return { status: 400, message: "Please provide image link.", }; }
 
         //! Check session, if don't exist, then, throw an error
         const checkServerSession = await serverSessionCheck(userName, id, jwtToken, userAgent);
@@ -19,9 +21,9 @@ async function removeProfilePic(userName: string, id: string, jwtToken: string, 
         await connect2MongoDB();
 
         //! Adding imageLink in the user document
-        const imageLink = await userAccountsModel.findOneAndUpdate({ userName: userName.toLowerCase() }, { $unset: { userProfilePic: "" } }).select('userProfilePic');
+        const returnOldImageLink = await userAccountsModel.findOneAndUpdate({ userName: userName.toLowerCase() }, { userProfilePic: imageLink }).select('userProfilePic');
 
-        return { status: 200, message: "Image uploaded successfully.", imageLink: imageLink.userProfilePic || "" };
+        return { status: 200, message: "Image uploaded successfully.", oldImageLink: returnOldImageLink.userProfilePic || "" };
 
     } catch (error) {
 
@@ -33,4 +35,4 @@ async function removeProfilePic(userName: string, id: string, jwtToken: string, 
     }
 }
 
-export default removeProfilePic;
+export default addUserProfilePic;

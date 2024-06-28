@@ -24,8 +24,12 @@ import forgotPassword from "./src/PasswordMangment/forgotPassword.js";
 import changePassword from "./src/PasswordMangment/changePassword.js"
 
 // Profile Pic Features
-import addUserProfilePic from './src/ProfilePicUpdate/addUserProfilePic.js'
-import removeProfilePic from './src/ProfilePicUpdate/removeProfilePic.js'
+import addUserProfilePic from './src/UserDataUpdate/ProfilePicUpdate/addUserProfilePic.js'
+import removeProfilePic from './src/UserDataUpdate/ProfilePicUpdate/removeProfilePic.js'
+
+// Username change
+import checkUniqueUsername from './src/UserDataUpdate/UsernameChange/checkUniqueUsername.js'
+import changeUsername from './src/UserDataUpdate/UsernameChange/changeUsername.js'
 
 export {
     signIn,
@@ -42,5 +46,7 @@ export {
     logoutAll,
     changePassword,
     addUserProfilePic,
-    removeProfilePic
+    removeProfilePic,
+    checkUniqueUsername,
+    changeUsername
 };
