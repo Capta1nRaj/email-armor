@@ -86,7 +86,12 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         try {
 
             // Finding If User Session Exist In DB Or Not
-            const findUserSessionViaID = await sessionsModel.findById(id).select('userName OTPCount');
+            const findUserSessionViaID = await sessionsModel.findById(id)
+                .select('userName OTPCount')
+                .populate({
+                    path: "userName", model: "userAccounts",
+                    select: "userName"
+                });
 
             // If Not, Means Someone Is Trying To Uh....
             if (findUserSessionViaID === null) {
@@ -104,7 +109,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
                 };
             }
 
-            if (findUserSessionViaID.userName === userName) {
+            if (findUserSessionViaID.userName.userName === userName) {
 
                 // Generating userOTP Of Length 6
                 const userOTP = await randomStringGenerator(6);

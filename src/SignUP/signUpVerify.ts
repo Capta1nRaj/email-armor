@@ -100,7 +100,7 @@ async function signUpVerify(username: string, otp: string, userAgent: string) {
 
         // JWT Token data
         const jwtData = {
-            userName: username,
+            userName: getUserDetailsAndOTP.userName,
             userAgent: encryptedUserAgent
         }
 
@@ -111,15 +111,18 @@ async function signUpVerify(username: string, otp: string, userAgent: string) {
         // Encrypting jwtToken
         const encryptedJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
 
+        // Fetching user _id to store in sessionToken
+        const userId = await userAccountsModel.findOne({ userName: getUserDetailsAndOTP.userName }).select('_id');
+
         // Store a session model to DB, & it will expire after 1 year
         const sessionToken = await new sessionsModel({
-            userName: username,
+            userName: userId,
             userAgent: userAgent,
             jwtToken: encryptedJWTToken,
             expireAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
         }).save();
 
-        return { id: sessionToken._id, userName: sessionToken.userName.toLowerCase(), signedJWTToken, status: 202, message: "Account Verified" }
+        return { id: sessionToken._id, userName: userId, signedJWTToken, status: 202, message: "Account Verified" }
 
     } catch (error) {
         console.log(error)

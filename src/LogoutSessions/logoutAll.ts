@@ -8,7 +8,12 @@ async function logoutAll(id: string, username: string, userAgent: any, token: an
 
     try {
         // Finding User Sessions By Id
-        const findUserSession = await sessionsModel.findById(id).select('userName userAgent jwtToken');
+        const findUserSession = await sessionsModel.findById(id)
+            .select('userName userAgent jwtToken')
+            .populate({
+                path: "userName", model: "userAccounts",
+                select: "userName"
+            });
 
         // If Session Is Null Means No Session Exist In DB, Then, Client Will Receive This Response
         if (!findUserSession) { return { status: 400, message: "No Session Found.", }; }
@@ -16,18 +21,19 @@ async function logoutAll(id: string, username: string, userAgent: any, token: an
         // Comparing the JWTTokendata & User Agent
         const comparingJWTToken = await bcrypt.compare(token, findUserSession.jwtToken);
         const checkIfUserAgentValid = findUserSession.userAgent === userAgent;
-        const compringUserName = findUserSession.userName === username.toLowerCase();
+        const compringUserName = findUserSession.userName.userName === username.toLowerCase();
 
         // If Current Session Exist In DB, Then, Delete That Specific Session
         if (compringUserName && checkIfUserAgentValid && comparingJWTToken) {
-            await sessionsModel.deleteMany({ userName: username });
-            return { status: 200, message: "All User Sessions Deleted.", };
+            await sessionsModel.deleteMany({ userName: findUserSession.userName._id });
+            return { status: 200, message: "All User Sessions Deleted." };
         }
 
         // If Not Exist In DB, Then, Client Will Receive This Response
         return { status: 400, message: "Data Not Valid." };
 
     } catch (error) {
+        console.log(error)
         return { status: 400, message: "Data Not Valid.", };
     }
 }

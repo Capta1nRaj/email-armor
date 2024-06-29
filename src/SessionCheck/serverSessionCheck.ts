@@ -25,7 +25,7 @@ async function serverSessionCheck(username: string, id: string, jwtToken: string
         await connect2MongoDB();
 
         //! Find if session exist in DB or not
-        const findSessionById = await sessionsModel.findById(id);
+        const findSessionById = await sessionsModel.findById(id).select('userAgent jwtToken');
 
         //! If not, then, throw error
         if (!findSessionById) return { status: 400, message: "Session doesn't exist.", };

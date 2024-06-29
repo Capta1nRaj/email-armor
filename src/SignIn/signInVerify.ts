@@ -36,13 +36,18 @@ async function signInVerify(username: string, otp: string, id: string, userAgent
     try {
 
         // Finding Session Via ID
-        const getDocumentViaID = await sessionsModel.findById(id).select('userName OTP');
+        const getDocumentViaID = await sessionsModel.findById(id)
+            .select('userName OTP')
+            .populate({
+                path: "userName", model: "userAccounts",
+                select: "userName"
+            });
 
         // Decrypting The OTP From The User
         const decryptedOTP = await bcrypt.compare(otp, getDocumentViaID.OTP);
 
         // If userName Is Same, & OTP Is Also Same, Update The Session Fields, Else Throw An Error
-        if (getDocumentViaID.userName === username.toLowerCase() && decryptedOTP === true) {
+        if (getDocumentViaID.userName.userName === username.toLowerCase() && decryptedOTP === true) {
 
             // Encrypting userAgent
             const encryptedUserAgent = await bcrypt.hash(userAgent, saltRounds)

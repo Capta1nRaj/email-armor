@@ -3,8 +3,8 @@ mongoose.set('autoCreate', false);
 
 const SessionsSchema = new mongoose.Schema({
     userName: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userAccounts"
     },
     jwtToken: {
         type: String,

@@ -2,7 +2,11 @@ import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
-import settingsModel from "../../models/sessionsModel.js";
+
+
+import settingsModel from "../../models/settingsModel.js";
+
+
 
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'

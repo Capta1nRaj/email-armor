@@ -108,7 +108,7 @@ async function signIn(username: string, userPassword: string | boolean, userAgen
 
         // Saving Session To DB
         const savedData = await new sessionsModel({
-            userName: username.toLowerCase(),
+            userName: findUserToLogin._id,
             OTP: encryptedOTP,
             userAgent: userAgent
         }).save();

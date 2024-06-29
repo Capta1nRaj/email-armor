@@ -95,6 +95,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
 
         // Generate And Securing an OTP
         const userOTP = await randomStringGenerator(6);
+
         const encryptedOTP = await bcrypt.hash(userOTP, saltRounds)
 
         // Send Unsecured OTP To The User Registered E-Mail

@@ -91,7 +91,7 @@ async function generateFileIfNotExists(filename: string, content: string, folder
 
 //! Provide Schema files to user workspace
 async function generateSchemaFiles() {
-    const modelFiles = ['accountsModel', 'otpModel', 'referHistoryModel', 'sessionsModel', 'settingsModel'];
+    const modelFiles = ['userAccountsModel', 'otpModel', 'referHistoryModel', 'sessionsModel', 'settingsModel'];
 
     modelFiles.forEach(async (filename) => {
         const filePath = fs.readFileSync(new URL(`../models/${filename}.js`, import.meta.url), 'utf8');
