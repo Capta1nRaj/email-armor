@@ -125,7 +125,7 @@ async function signUpVerify(username: string, otp: string, userAgent: string) {
         return { id: sessionToken._id, userName: userId, signedJWTToken, status: 202, message: "Account Verified" }
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return { status: 500, message: "Internal Server Error" };
     }
 }

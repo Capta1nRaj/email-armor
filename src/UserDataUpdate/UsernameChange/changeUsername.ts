@@ -1,6 +1,7 @@
 import { connect2MongoDB } from "connect2mongodb";
 import userAccountsModel from "../../../models/userAccountsModel.js";
 import serverSessionCheck from "../../SessionCheck/serverSessionCheck.js";
+import sessionsModel from "../../../models/sessionsModel.js";
 
 async function changeUsername(oldUsername: string, newUsername: string, id: string, jwtToken: string, userAgent: string) {
     try {
@@ -25,6 +26,9 @@ async function changeUsername(oldUsername: string, newUsername: string, id: stri
 
         //! If newUsername doesn't exist, means its available, so we will change the oldUsername with the newUsername data
         await userAccountsModel.updateOne({ userName: oldUsername }, { $set: { userName: newUsername } });
+
+        //! Deleteing all the old serverSession data once userName is changed successfully
+        await sessionsModel.deleteMany({ userName: oldUsername });
 
         return { status: 200, message: "Username changed successfully." };
 

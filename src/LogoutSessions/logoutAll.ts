@@ -33,7 +33,7 @@ async function logoutAll(id: string, username: string, userAgent: any, token: an
         return { status: 400, message: "Data Not Valid." };
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return { status: 400, message: "Data Not Valid.", };
     }
 }

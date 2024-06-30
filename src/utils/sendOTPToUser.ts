@@ -70,7 +70,7 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
   try {
     await auth.sendMail(receiver);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
