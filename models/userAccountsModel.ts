@@ -32,12 +32,14 @@ const UserAccountsSchema = new mongoose.Schema({
         unique: true,
     },
     userReferrals: {
-        type: [String],
-        default: [],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "userAccounts",
+        default: []
     },
     userReferredBy: {
-        type: String,
-        default: "",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userAccounts",
+        required: false,
     },
     userVerified: {
         type: Boolean,

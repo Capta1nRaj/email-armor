@@ -69,7 +69,10 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // Checking If User Entered A Referral Code Or Not
         // If Entered, Check That It Exist Or Not
         // If Not Entered, Set As ''
-        const referredByUser = userReferredBy.length > 0 ? await userAccountsModel.findOne({ userReferralCode: userReferredBy }).select('userName') : '';
+        console.log("44")
+        const referredByUser = userReferredBy.length > 0 ? await userAccountsModel.findOne({ userReferralCode: userReferredBy }).select('_id') : '';
+        console.log(referredByUser);
+        console.log("45");
 
         // If User Entered Wrong Referral Code, Return The Error
         if (referredByUser === null) {
@@ -81,7 +84,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
 
         // Secure user password
         const encryptedPassword = await bcrypt.hash(userPassword, saltRounds)
-
+        console.log("46");
         // Save New User Details To DB
         await new userAccountsModel({
             userFullName,
@@ -89,7 +92,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
             userEmail: userEmail.toLowerCase(),
             userPassword: encryptedPassword,
             userReferralCode: userReferralCode,
-            userReferredBy: referredByUser.userName || "",
+            userReferredBy: referredByUser ? referredByUser._id : null,
             userRole: userRole || ""
         }).save();
 
@@ -107,6 +110,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         return { status: 201, message: "Account Created Successfully, OTP Sent To Mail.", userName: userName.toLowerCase() };
 
     } catch (error) {
+        // console.log(error)
         return { status: 500, message: "Internal Server Error!" };
     }
 }

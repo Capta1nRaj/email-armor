@@ -82,8 +82,8 @@ async function signUpVerify(username: string, otp: string, userAgent: string) {
             // It Will User The Referral Code To Find The User Who Referred A New User
             //!  Guy who referred
             const referralUserData = await userAccountsModel.findOneAndUpdate(
-                { userName: referredUserData.userReferredBy },
-                { $addToSet: { userReferrals: referredUserData.userName }, $inc: { points: fetchSettings.referred_points } },
+                { _id: referredUserData.userReferredBy },
+                { $addToSet: { userReferrals: referredUserData._id }, $inc: { points: fetchSettings.referred_points } },
                 { new: true }
             ).select('userName');
 

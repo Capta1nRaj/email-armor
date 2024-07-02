@@ -8,10 +8,10 @@ async function customDeleteAUser(userName: string) {
         await connect2MongoDB();
 
         // Deleting user from db
-        const deletingUser = await userAccountsModel.findOneAndDelete({ userName }).select('userReferredBy');
+        const deletingUser = await userAccountsModel.findOneAndDelete({ userName }).select('_id');
 
         // Deleteing the userName from the referred users userReferrals docuemnt
-        await userAccountsModel.findOneAndUpdate({ userName: deletingUser.userReferredBy }, { $pull: { userReferrals: userName } });
+        await userAccountsModel.findOneAndUpdate({ _id: deletingUser._id }, { $pull: { userReferrals: deletingUser._id } });
 
         return {
             status: 200,
