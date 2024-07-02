@@ -11,10 +11,6 @@ async function changeUsername(oldUsername: string, newUsername: string, id: stri
         //! Checking If oldUsername, & other data is passed By Client Or Not
         if (!oldUsername || !id || !jwtToken) { return { status: 400, message: "Session doesn't exist." }; }
 
-        //! Check session, if don't exist, then, throw an error
-        const checkServerSession = await serverSessionCheck(oldUsername, id, jwtToken, userAgent);
-        if (checkServerSession.status !== 202) { return { status: 400, message: "Session doesn't exist.", }; }
-
         //! Connecting to MognoDB
         await connect2MongoDB();
 
@@ -23,6 +19,10 @@ async function changeUsername(oldUsername: string, newUsername: string, id: stri
 
         //! If newUsername exists, means its unavailable
         if (isUsernameExist) { return { status: 400, message: "Username already exist." }; }
+
+        //! Check session, if don't exist, then, throw an error
+        const checkServerSession = await serverSessionCheck(oldUsername, id, jwtToken, userAgent);
+        if (checkServerSession.status !== 202) { return { status: 400, message: "Session doesn't exist.", }; }
 
         //! If newUsername doesn't exist, means its available, so we will change the oldUsername with the newUsername data
         await userAccountsModel.updateOne({ userName: oldUsername }, { $set: { userName: newUsername } });

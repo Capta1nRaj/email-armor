@@ -10,7 +10,7 @@ async function checkUniqueUsername(userName: string) {
         const isUsernameExist = await userAccountsModel.exists({ userName });
 
         //! If userName null, means its available
-        if (!isUsernameExist) { return { status: 400, message: "Username available!" }; }
+        if (!isUsernameExist) { return { status: 200, message: "Username available!" }; }
 
         return { status: 400, message: "Username already exist." };
 

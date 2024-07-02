@@ -31,6 +31,10 @@ import removeProfilePic from './src/UserDataUpdate/ProfilePicUpdate/removeProfil
 import checkUniqueUsername from './src/UserDataUpdate/UsernameChange/checkUniqueUsername.js'
 import changeUsername from './src/UserDataUpdate/UsernameChange/changeUsername.js'
 
+// Useremail Change
+import checkUniqueEmail from './src/UserDataUpdate/UserEmailChange/checkUniqueEmail.js'
+import changeUserEmail from './src/UserDataUpdate/UserEmailChange/changeUserEmail.js'
+
 export {
     signIn,
     signInVerify,
@@ -48,5 +52,7 @@ export {
     addUserProfilePic,
     removeProfilePic,
     checkUniqueUsername,
-    changeUsername
+    changeUsername,
+    checkUniqueEmail,
+    changeUserEmail
 };

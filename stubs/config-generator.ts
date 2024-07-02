@@ -107,6 +107,7 @@ async function generateConfigFile() {
         "RESEND_FORGOT_PASSWORD_MAIL_TITLE": "Custom-Forgot-Password-Title",
         "RESEND_ADD_A_USER_MAIL_TITLE": "Custom-Add-A-User-Title",
         "CHANGE_PASSWORD_MAIL_TITLE": "Change_Password_Mail_Title",
+        "CHANGE_EMAIL_MAIL_TITLE": "Change-Email-Mail-Title",
         "REFERRED_POINTS": 100,
         "REFERRED_PERSON_POINTS": 25,
         "OTP_LIMITS": 3,
@@ -142,6 +143,7 @@ async function updatePoints() {
             signup_mail_title: userConfig.RESEND_SIGN_UP_MAIL_TITLE,
             signin_mail_title: userConfig.RESEND_SIGN_IN_MAIL_TITLE,
             forgot_password_mail_title: userConfig.RESEND_FORGOT_PASSWORD_MAIL_TITLE,
+            change_email_mail_title: userConfig.CHANGE_EMAIL_MAIL_TITLE,
             add_a_user_mail_title: userConfig.RESEND_ADD_A_USER_MAIL_TITLE,
             change_password_mail_title: userConfig.CHANGE_PASSWORD_MAIL_TITLE
         }).save();
@@ -154,6 +156,7 @@ async function updatePoints() {
                 signup_mail_title: userConfig.RESEND_SIGN_UP_MAIL_TITLE,
                 signin_mail_title: userConfig.RESEND_SIGN_IN_MAIL_TITLE,
                 forgot_password_mail_title: userConfig.RESEND_FORGOT_PASSWORD_MAIL_TITLE,
+                change_email_mail_title: userConfig.CHANGE_EMAIL_MAIL_TITLE,
                 add_a_user_mail_title: userConfig.RESEND_ADD_A_USER_MAIL_TITLE,
                 change_password_mail_title: userConfig.CHANGE_PASSWORD_MAIL_TITLE
             },

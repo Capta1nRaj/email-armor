@@ -20,7 +20,8 @@ type EmailTitles = {
   signIn: string;
   forgotPassword: string;
   addAUser: string;
-  changePassword: string
+  changePassword: string;
+  emailChange: string;
 };
 
 async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword: any, functionPerformed: keyof EmailTitles, userIP: any, userAgent: string) {
@@ -44,7 +45,8 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
     'signIn': fetchSettings.signin_mail_title,
     'forgotPassword': fetchSettings.forgot_password_mail_title,
     'addAUser': fetchSettings.add_a_user_mail_title,
-    'changePassword': fetchSettings.change_password_mail_title
+    'changePassword': fetchSettings.change_password_mail_title,
+    'emailChange': fetchSettings.change_email_mail_title
   };
 
   const emailTitle = emailTitles[functionPerformed];
@@ -69,6 +71,7 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
 
   try {
     await auth.sendMail(receiver);
+    console.log("Email sent successfully!");
   } catch (error) {
     console.error(error);
   }
