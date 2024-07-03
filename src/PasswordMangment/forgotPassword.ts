@@ -2,15 +2,12 @@ import { connect2MongoDB } from "connect2mongodb";
 import otpModel from "../../models/otpModel.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
-
-
 import settingsModel from "../../models/settingsModel.js";
-
-
 
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
 import userAccountsModel from "../../models/userAccountsModel.js";
+import sessionsModel from "../../models/sessionsModel.js";
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -21,12 +18,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 async function forgotPassword(username: string, userAgent: string, OTP: string, newPassword: string, userIP: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
-    if (!userAgent) {
-        return {
-            status: 401,
-            message: "Your device is unauthorized."
-        };
-    }
+    if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
     try {
 
@@ -48,15 +40,12 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
             const finduserAndSendEmailForVerification = await userAccountsModel.findOne({ userName: username.toLowerCase() }).select('userName userEmail OTP');
 
             // If Not, Client Will Receive This Response
-            if (finduserAndSendEmailForVerification === null) {
+            if (!finduserAndSendEmailForVerification) {
 
-                return {
-                    status: 400,
-                    message: "Username Doesn't Exist."
-                }
+                return { status: 400, message: "Username Doesn't Exist." }
 
                 // If Exist, OTP Will Be Generated
-            } else if (finduserAndSendEmailForVerification !== null) {
+            } else if (finduserAndSendEmailForVerification) {
 
                 // Checking If OTP Already Exist In DB Or Not
                 const checkIfUserAlreadyRequestedForOTP = await otpModel.findOne({ userName: username.toLowerCase() }).select('OTPCount');
@@ -74,16 +63,12 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                     await sendOTPToUser(finduserAndSendEmailForVerification.userName, finduserAndSendEmailForVerification.userEmail, userOTP, 'forgotPassword', userIP, userAgent)
 
                     // Saving Details To DB
-                    new otpModel({
+                    await new otpModel({
                         userName: username.toLowerCase(),
                         OTP: encryptedOTP
                     }).save();
 
-                    return {
-                        status: 201,
-                        message: "OTP Sent To Mail",
-                        userName: username.toLowerCase(),
-                    };
+                    return { status: 201, message: "OTP Sent To Mail", userName: username.toLowerCase(), };
 
                     // If OTP Exist, Then, Update The Docuement In The DB
                 } else if (checkIfUserAlreadyRequestedForOTP !== null) {
@@ -93,10 +78,7 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                     // It Will Fetch Settings, & Get The OTP Limits Values From The DB
                     const fetchSettings = await settingsModel.findOne({}).select('otp_limits');
                     if (checkIfUserAlreadyRequestedForOTP.OTPCount >= fetchSettings.otp_limits) {
-                        return {
-                            status: 403,
-                            message: "Max OTP Limit Reached, Please Try After 10 Minutes."
-                        };
+                        return { status: 403, message: "Max OTP Limit Reached, Please Try After 10 Minutes." };
                     }
 
                     // Generating Random OTP
@@ -165,16 +147,19 @@ async function forgotPassword(username: string, userAgent: string, OTP: string, 
                 // If OTP Is True, Then, Find & Update The Password Of The Client
             } else if (decryptedOTP === true) {
 
+                // Encrypting the password
                 const encryptedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-                await userAccountsModel.updateOne({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }, { new: true });
+                // Update the password
+                const getUserID = await userAccountsModel.findOneAndUpdate({ userName: username.toLowerCase() }, { userPassword: encryptedPassword }).select('_id');
 
+                // Delete the OTP in DB
                 await otpModel.deleteOne({ userName: username.toLowerCase() });
 
-                return {
-                    status: 200,
-                    message: "Password Updated."
-                }
+                // Deleting the old user session
+                await sessionsModel.deleteMany({ userName: getUserID._id });
+
+                return { status: 200, message: "Password Updated." }
             }
         }
 

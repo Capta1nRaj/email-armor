@@ -25,10 +25,10 @@ async function changeUsername(oldUsername: string, newUsername: string, id: stri
         if (checkServerSession.status !== 202) { return { status: 400, message: "Session doesn't exist.", }; }
 
         //! If newUsername doesn't exist, means its available, so we will change the oldUsername with the newUsername data
-        await userAccountsModel.updateOne({ userName: oldUsername }, { $set: { userName: newUsername } });
+        const oldUsernameID = await userAccountsModel.findOneAndUpdate({ userName: oldUsername }, { $set: { userName: newUsername } }).select('_id');
 
         //! Deleteing all the old serverSession data once userName is changed successfully
-        await sessionsModel.deleteMany({ userName: oldUsername });
+        await sessionsModel.deleteMany({ userName: oldUsernameID._id });
 
         return { status: 200, message: "Username changed successfully." };
 

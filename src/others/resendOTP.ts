@@ -45,22 +45,34 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
         // Checking If User Exist In DB Or Not
         const findIfUserNameExistBeforeSending = await otpModel.findOne({ userName }).select('OTPCount');
 
-        // If Not, Means Someone Is Trying To Uh....
+        // If Not, Means Someone Is Trying To Uh or the OTP expired
         if (!findIfUserNameExistBeforeSending) {
-            return {
-                status: 401,
-                message: "Is this Mr. Developer or someone trying to.... uh?",
-            };
+            // Checking if user is verified or not, if no, then, it means the OTP is expired, so we will resend the OTP
+            const checkIsUserVerified = await userAccountsModel.findOne({ userName }).select('userEmail userVerified');
+
+            if (checkIsUserVerified.userVerified) {
+
+                return { status: 401, message: "Session Expired!", };
+
+            } else {
+                // Encrypting The User OTP
+                const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
+
+                // Saving Secured OTP to DB
+                await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();
+
+                // Sending OTP To User
+                await sendOTPToUser(userName, checkIsUserVerified.userEmail, userOTP, 'signUp', userIP, userAgent);
+
+                return { status: 201, message: "OTP Resent To The User.", };
+            }
         }
 
         // If User Exist, Then, We Will Try To Check That How Many Times Did User Reguested For OTP
         // If It Reaches The Limit i.e. OTP_LIMITS in JSON file, Then, Tell User To Try After 10 Minutes
 
         if (findIfUserNameExistBeforeSending.OTPCount >= fetchSettings.otp_limits) {
-            return {
-                status: 403,
-                message: "Max OTP Limit Reached, Please Try After 10 Minutes."
-            };
+            return { status: 403, message: "Max OTP Limit Reached, Please Try After 10 Minutes." };
         }
 
         // Encrypting The User OTP
@@ -95,10 +107,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
 
             // If Not, Means Someone Is Trying To Uh....
             if (findUserSessionViaID === null) {
-                return {
-                    status: 401,
-                    message: "Is this Mr. Developer or someone trying to.... uh?"
-                }
+                return { status: 401, message: "Session Expired!" }
             }
 
             // If It Reaches The Limit i.e. OTP_LIMITS in JSON file, Then, Tell User To Try After 10 Minutes
@@ -139,10 +148,7 @@ async function resendOTP(username: string, functionPerformed: string, userAgent:
 
             } else {
 
-                return {
-                    status: 401,
-                    message: "Is this Mr. Developer or someone trying to.... uh?",
-                };
+                return { status: 401, message: "Is this Mr. Developer or someone trying to.... uh?", };
 
             }
 
