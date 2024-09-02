@@ -1,16 +1,15 @@
+// Basic imports
+import userAccountsModel from '../../models/userAccountsModel.js';
+import settingsModel from '../../models/settingsModel.js';
+import referHistoryModel from '../../models/referHistoryModel.js';
+import sessionsModel from '../../models/sessionsModel.js';
+import { connect2MongoDB } from "connect2mongodb";
+import randomStringGenerator from "../utils/randomStringGenerator.js";
 import { config } from 'dotenv';
 config();
 
-import { connect2MongoDB } from "connect2mongodb";
-import otpModel from "../../models/otpModel.js";
-import randomStringGenerator from "../utils/randomStringGenerator.js";
-import sendOTPToUser from "../utils/sendOTPToUser.js";
-
-const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
-
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
-import userAccountsModel from '../../models/userAccountsModel.js';
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -18,52 +17,50 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
     saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
-async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userIP: string, userRole: string) {
+// Retrieving jwt environment variables
+import jwt from 'jsonwebtoken';
+function getEnvVariable(key: string): string {
+    const value = process.env[key];
+    if (value === undefined || value.length === 0) { throw new Error(`${key} is undefined.`); }
+    return value;
+}
+const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
+let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
+if (expireJwtToken === '0') { expireJwtToken = null }
+
+async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userRole: string) {
 
     //! Checking if user is trying to hit the API with a software like Postman
-    if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
+    if (!userAgent) { return { message: "Your device is unauthorized.", status: 401 }; }
 
     try {
 
-        // Checking If userFullName Is Valid Or Not
+        // Validating userFullName format
         const regexForuserFullName = /^[a-zA-Z\s]+$/;
+        if (!regexForuserFullName.test(userFullName)) { return { message: "Invalid Fullname!", status: 400, }; }
 
-        if (!regexForuserFullName.test(userFullName)) {
-            return { status: 400, message: "Invalid userFullname!" };
-        }
-
-        // Checking If userName Is Valid Or Not
+        // Validating userName format
         const regexForuserName = /^[a-zA-Z0-9_]+$/;
+        if (!regexForuserName.test(userName)) { return { message: "Invalid username!", status: 400, }; }
 
-        if (!regexForuserName.test(userName)) {
-            return { status: 400, message: "Invalid userName!" };
-        }
-
-        // Checking If Email Includes 2 @ Signs
-        const regexForuserEmail = /^[a-zA-Z0-9._@]+$/;
-
-        if (userEmail.toLowerCase().includes('@', userEmail.toLowerCase().indexOf('@') + 1) || !regexForuserEmail.test(userEmail)) {
-            return { status: 400, message: "Invalid Email Buddy!" };
-        }
-
-        // Checking If Email Domain Is Allowed Or Not
-        if (Array.isArray(allowedDomains) && !allowedDomains.some((domain: string) => userEmail.toLowerCase().endsWith(domain))) {
-            return { status: 400, message: "Email Isn't From The Allowed Domains From The List." };
-        }
+        // Validating userEmail address format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userEmail)) { return { message: "Invalid Email!", status: 400 }; }
 
         // If User Passowrd Length Is Lesser Than 8, Throw An Error
-        if (userPassword.length <= 8) { return { status: 206, message: "Min. Password Length Must Be Greater Than 8.", }; }
+        if (userPassword.length <= 8) { return { message: "Min. Password Length Must Be Greater Than 8.", status: 206 }; }
 
+        // Connecting to MongoDB
         await connect2MongoDB();
 
-        // Checking If UserName & EmailId Already Exists In DB Or Not
+        // Validating if UserName & EmailId Already Exists In DB Or Not
         const existingUser = await userAccountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
 
         // If User Exist, Notify The Client With The Following Message Depending On The Case
         if (existingUser) {
             let message = "";
-            if (existingUser.userName === userName.toLowerCase()) { message += "Username already exists."; return { status: 400, message }; }
-            if (existingUser.userEmail === userEmail.toLowerCase()) { message += "Email ID already exists."; return { status: 400, message }; }
+            if (existingUser.userName === userName.toLowerCase()) { message += "Username already exists!"; return { message, status: 400 }; }
+            if (existingUser.userEmail === userEmail.toLowerCase()) { message += "Email already exists!"; return { message, status: 400 }; }
         }
 
         // Checking If User Entered A Referral Code Or Not
@@ -72,39 +69,76 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const referredByUser = userReferredBy.length > 0 ? await userAccountsModel.findOne({ userReferralCode: userReferredBy }).select('_id') : '';
 
         // If User Entered Wrong Referral Code, Return The Error
-        if (referredByUser === null) {
-            return { status: 400, message: "Wrong Referral Code!" };
-        }
+        if (referredByUser === null) { return { message: "Wrong Referral Code!", status: 400 }; }
 
         // Generating A Unique userReferralCode For The New User
         const userReferralCode = await generatingUserReferralCode();
 
-        // Secure user password
-        const encryptedPassword = await bcrypt.hash(userPassword, saltRounds)
+        // Hasing user password
+        const hashingPassword = await bcrypt.hash(userPassword, saltRounds);
 
         // Save New User Details To DB
-        await new userAccountsModel({
+        const newUserID = await new userAccountsModel({
             userFullName,
             userName: userName.toLowerCase(),
             userEmail: userEmail.toLowerCase(),
-            userPassword: encryptedPassword,
+            userPassword: hashingPassword,
             userReferralCode: userReferralCode,
             userReferredBy: referredByUser ? referredByUser._id : null,
             userRole: userRole || ""
         }).save();
 
-        // Generate And Securing an OTP
-        const userOTP = await randomStringGenerator(6);
+        // If User Is Referred By Someone
+        if (newUserID.userReferredBy) {
+            // It Will Fetch Settings, & Get The Points Values From The DB
+            const fetchSettings = await settingsModel.findOne({}).select('referred_person_points referred_points');
 
-        const encryptedOTP = await bcrypt.hash(userOTP, saltRounds)
+            // First, It Will Verify The User's Account And Assign Them The Referral Points (REFERRED_PERSON_POINTS as per JSON File)
+            //! Guy got referred 
+            await userAccountsModel.updateOne({ userName: userName.toLowerCase() }, { $inc: { points: fetchSettings.referred_person_points } });
 
-        // Send Unsecured OTP To The User Registered E-Mail
-        await sendOTPToUser(userName.toLowerCase(), userEmail.toLowerCase(), userOTP, 'signUp', userIP, userAgent);
+            // Secondly, It Will Update The Points For The User (REFERRED_POINTS As Per JSON File) Who Referred Them And Add The User's userName To The Referrer's List
+            // It Will User The Referral Code To Find The User Who Referred A New User
+            //!  Guy who referred
+            const guyWhoReferred = await userAccountsModel.findOneAndUpdate(
+                { _id: newUserID.userReferredBy },
+                { $addToSet: { userReferrals: newUserID._id }, $inc: { points: fetchSettings.referred_points } },
+                { new: true }
+            ).select('userName');
 
-        // Saving Secured OTP to DB
-        await new otpModel({ userName: userName.toLowerCase(), OTP: encryptedOTP }).save();
+            //! Adding the referred points history in the DB for future use if needed by the organization
+            const referHistoryData = [
+                { userName: guyWhoReferred._id, points: fetchSettings.referred_points, reason: "Referred to " + userName.toLowerCase() + "." },
+                { userName: newUserID._id, points: fetchSettings.referred_person_points, reason: "Referred by " + guyWhoReferred.userName + "." }
+            ];
+            await referHistoryModel.insertMany(referHistoryData);
+        }
 
-        return { status: 201, message: "Account Created Successfully, OTP Sent To Mail.", userName: userName.toLowerCase() };
+        // Hasing userAgent
+        const hashingUserAgent = await bcrypt.hash(userAgent, saltRounds)
+
+        // JWT Token data
+        const jwtData = {
+            userName: userName.toLowerCase(),
+            userAgent: hashingUserAgent
+        }
+
+        // Signing JWT Token with jwtTokenValue & expiry date
+        const signOptions = expireJwtToken ? { expiresIn: expireJwtToken } : undefined;
+        const signedJWTToken = jwt.sign(jwtData, jwtTokenValue, signOptions);
+
+        // Encrypting jwtToken
+        const hashingJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
+
+        // Store a session model to DB, & it will expire after 1 year
+        const sessionID = await new sessionsModel({
+            userName: newUserID._id,
+            userAgent: userAgent,
+            jwtToken: hashingJWTToken,
+            expireAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        }).save();
+
+        return { id: sessionID._id, userName: userName.toLowerCase(), signedJWTToken: signedJWTToken, message: "Account Created Successfully!", status: 202 };
 
     } catch (error) {
         console.log(error)

@@ -1,6 +1,5 @@
 // Sign-Up User Imports
-import signup from "./src/SignUP/signUp.js";
-import signUpVerify from "./src/SignUP/signUpVerify.js";
+import signup from "./src/signup/signup.js";
 
 // Sign-In User Imports
 import signIn from "./src/SignIn/signIn.js";
@@ -39,7 +38,6 @@ export {
     signIn,
     signInVerify,
     signup,
-    signUpVerify,
     localSessionCheck,
     serverSessionCheck,
     resendOTP,

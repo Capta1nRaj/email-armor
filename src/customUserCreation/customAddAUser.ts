@@ -8,8 +8,6 @@ import { connect2MongoDB } from "connect2mongodb";
 import randomStringGenerator from "../utils/randomStringGenerator.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";
 
-const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS && process.env.ALLOWED_EMAIL_DOMAINS.split(',');
-
 //! Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
 import userAccountsModel from '../../models/userAccountsModel.js';
@@ -52,11 +50,6 @@ async function customAddAUser(adminName: string, userFullName: string, userName:
 
         if (userEmail.toLowerCase().includes('@', userEmail.toLowerCase().indexOf('@') + 1) || !regexForuserEmail.test(userEmail)) {
             return { status: 400, message: "Invalid Email Buddy!" };
-        }
-
-        // Checking If Email Domain Is Allowed Or Not
-        if (Array.isArray(allowedDomains) && !allowedDomains.some((domain: string) => userEmail.toLowerCase().endsWith(domain))) {
-            return { status: 400, message: "Email Isn't From The Allowed Domains From The List." };
         }
 
         await connect2MongoDB();

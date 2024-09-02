@@ -9,35 +9,11 @@ const userAccountsSchema = new mongoose.Schema({
     userProfilePic: { type: String, default: "" },
     userReferralCode: { type: String, required: true, unique: true, },
     userReferrals: { type: [mongoose.Schema.Types.ObjectId], ref: "userAccounts", default: [] },
-    userReferredBy: { type: mongoose.Schema.Types.ObjectId, ref: "userAccounts", required: false, },
-    userVerified: { type: Boolean, default: false, },
-    userBanned: { type: Boolean, default: false, },
-    points: { type: Number, default: 0, },
-    userRole: { type: String, },
-    userUniqueIdentification: { type: [String], default: [], },
-    userBankDetails: {
-        type: [
-            {
-                bankName: { type: String, },
-                accountNumber: { type: String, },
-                ifscCode: { type: String, }
-            }
-        ],
-        default: []
-    },
-    userAddress: {
-        type: [
-            {
-                addressLine1: { type: String },
-                addressLine2: { type: String },
-                landmark: { type: String },
-                city: { type: String },
-                country: { type: String },
-                pincode: { type: String }
-            }
-        ],
-        default: []
-    }
+    userReferredBy: { type: mongoose.Schema.Types.ObjectId, ref: "userAccounts", required: false },
+    userVerified: { type: Boolean, default: true },
+    userBanned: { type: Boolean, default: false },
+    points: { type: Number, default: 0 },
+    userRole: { type: String },
 }, {
     timestamps: true
 });
