@@ -1,4 +1,4 @@
-import serverSessionCheck from "../SessionCheck/serverSessionCheck.js";
+import serverSessionCheck from "../sessionCheck/serverSessionCheck.js";
 import otpModel from "../../models/otpModel.js";
 import settingsModel from "../../models/settingsModel.js";
 import sendOTPToUser from "../utils/sendOTPToUser.js";

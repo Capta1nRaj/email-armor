@@ -1,6 +1,6 @@
 import { connect2MongoDB } from "connect2mongodb";
 import userAccountsModel from "../../../models/userAccountsModel.js";
-import localSessionCheck from "../../SessionCheck/localSessionCheck.js";
+import localSessionCheck from "../../sessionCheck/localSessionCheck.js";
 
 async function removeProfilePic(userName: string, jwtToken: string, userAgent: string) {
     try {

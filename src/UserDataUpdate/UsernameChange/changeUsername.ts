@@ -1,6 +1,6 @@
 import { connect2MongoDB } from "connect2mongodb";
 import userAccountsModel from "../../../models/userAccountsModel.js";
-import serverSessionCheck from "../../SessionCheck/serverSessionCheck.js";
+import serverSessionCheck from "../../sessionCheck/serverSessionCheck.js";
 import sessionsModel from "../../../models/sessionsModel.js";
 
 async function changeUsername(oldUsername: string, newUsername: string, id: string, jwtToken: string, userAgent: string) {

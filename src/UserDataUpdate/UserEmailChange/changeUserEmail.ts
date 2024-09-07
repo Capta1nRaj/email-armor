@@ -1,6 +1,6 @@
 import { connect2MongoDB } from "connect2mongodb";
 import userAccountsModel from "../../../models/userAccountsModel.js";
-import serverSessionCheck from "../../SessionCheck/serverSessionCheck.js";
+import serverSessionCheck from "../../sessionCheck/serverSessionCheck.js";
 import sessionsModel from "../../../models/sessionsModel.js";
 import sendOTPToUser from "../../utils/sendOTPToUser.js";
 import randomStringGenerator from "../../utils/randomStringGenerator.js";

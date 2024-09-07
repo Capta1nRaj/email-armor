@@ -1,12 +1,10 @@
-// Sign-Up User Imports
-import signup from "./src/signup/signup.js";
-
-// Sign-In User Imports
-import signin from "./src/signin/signin.js";
+// User Auth imports
+import signup from "./src/userAuth/signup.js";
+import signin from "./src/userAuth/signin.js";
 
 // Session Check Imports
-import localSessionCheck from "./src/SessionCheck/localSessionCheck.js";
-import serverSessionCheck from "./src/SessionCheck/serverSessionCheck.js";
+import localSessionCheck from "./src/sessionCheck/localSessionCheck.js";
+import serverSessionCheck from "./src/sessionCheck/serverSessionCheck.js";
 
 // Only for personal or high-end user (use this if making any admin panel type websites)
 import customAddAUser from './src/CustomUserCreation/customAddAUser.js'

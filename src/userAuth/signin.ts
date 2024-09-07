@@ -1,12 +1,13 @@
 // Basic imports
 import { connect2MongoDB } from "connect2mongodb";
 import sessionsModel from "../../models/sessionsModel.js";
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken';
+import userAccountsModel from '../../models/userAccountsModel.js';
 import { config } from 'dotenv';
 config();
 
 // Checking if BCRYPT_SALT_ROUNDS is a number or not
-import bcrypt from 'bcrypt'
-import userAccountsModel from '../../models/userAccountsModel.js';
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
     throw new Error("saltRounds is either undefined or a valid number")
@@ -15,7 +16,6 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 }
 
 // Retrieving jwt environment variables
-import jwt from 'jsonwebtoken';
 function getEnvVariable(key: string): string {
     const value = process.env[key];
     if (value === undefined || value.length === 0) { throw new Error(`${key} is undefined.`); }
@@ -95,7 +95,8 @@ async function signin(userEmail: string, userName: string, userPassword: string 
         }
     } catch (error) {
         console.log(error)
-        return { message: "Internal Server Error!", status: 500 };
+        // Returning a message with a link to raise a PR on GitHub in case of a server error
+        return { message: "An unexpected error occurred. Please report this issue at https://github.com/Capta1nRaj/email-armor", status: 500 };
     }
 }
 
