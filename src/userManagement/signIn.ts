@@ -1,7 +1,7 @@
 // Basic imports
 import { connect2MongoDB } from "connect2mongodb";
 import sessionsModel from "../../models/sessionsModel.js";
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userAccountsModel from '../../models/userAccountsModel.js';
 import { config } from 'dotenv';
@@ -31,6 +31,7 @@ async function signIn(userEmail: string, userName: string, userPassword: string 
         // Checking if user is trying to hit the API with a software like Postman
         if (!userAgent) { return { message: "Your device is unauthorized.", status: 401 }; }
 
+        // If both userName and userEmail are undefined, throw an error
         if (!userName && !userEmail) { return { message: "Either userName or userEmail must be provided!", status: 400 }; }
 
         // Validating userName format if exist
@@ -50,7 +51,7 @@ async function signIn(userEmail: string, userName: string, userPassword: string 
 
         // Validating if user exist
         const findUserToLogin = await userAccountsModel.findOne({
-            $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail }]
+            $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }]
         }).select('_id userVerified userName userEmail userPassword');
 
         // If user not found, throw error
@@ -94,7 +95,7 @@ async function signIn(userEmail: string, userName: string, userPassword: string 
             return { message: "Please Validate Your Details.", status: 400 };
         }
     } catch (error) {
-        console.log(error)
+        console.error(error)
         // Returning a message with a link to raise a PR on GitHub in case of a server error
         return { message: "An unexpected error occurred. Please report this issue at https://github.com/Capta1nRaj/email-armor", status: 500 };
     }

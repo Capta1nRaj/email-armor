@@ -131,7 +131,7 @@ async function signUp(userFullName: string, userName: string, userEmail: string,
         return { id: sessionID._id, userName: userName.toLowerCase(), signedJWTToken: signedJWTToken, message: "Account Created Successfully!", status: 202 };
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
         // Returning a message with a link to raise a PR on GitHub in case of a server error
         return { message: "An unexpected error occurred. Please report this issue at https://github.com/Capta1nRaj/email-armor", status: 500 };
     }
@@ -139,7 +139,7 @@ async function signUp(userFullName: string, userName: string, userEmail: string,
 
 // Generating Unique Referral Code For New User
 async function generatingUserReferralCode() {
-    // Random 6 Digit Generation
+    // Generating a random 6-digit OTP
     const userReferralCode = await randomStringGenerator(6);
 
     // Check If Code Already Exist In DB Or Not

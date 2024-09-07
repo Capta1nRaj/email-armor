@@ -58,7 +58,7 @@ async function serverSessionCheck(username: string, id: string, jwtToken: string
         return { status: 400, message: "Session doesn't exist." };
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         // Return error with a link to report the issue in case of a server failure
         return { message: "An unexpected error occurred. Please report this issue at https://github.com/Capta1nRaj/email-armor", status: 500 };
     }

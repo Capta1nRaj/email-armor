@@ -36,7 +36,7 @@ async function logoutOnce(id: string, userName: string, userAgent: any, jwtToken
         return { message: "Invalid session data provided.", status: 400 };
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         // Returning a message with a link to raise a PR on GitHub in case of a server error
         return { message: "An unexpected error occurred. Please report this issue at https://github.com/Capta1nRaj/email-armor", status: 500 };
     }

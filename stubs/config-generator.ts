@@ -69,7 +69,7 @@ async function executeOperationsBasedOnConfirmation() {
         if (answer2.confirmation) { await generateSchemaFiles(); };
     }
 
-    console.log("\n Configuration file successfully updated.");
+    console.info("\n Configuration file successfully updated.");
     await runStepByStep();
 }
 
@@ -85,7 +85,7 @@ async function generateFileIfNotExists(filename: string, content: string, folder
 
     if (!fs.existsSync(filePath)) {
         fs.writeFileSync(filePath, content);
-        console.log(`\n ${filePath} generated successfully.`);
+        console.info(`\n ${filePath} generated successfully.`);
     }
 }
 

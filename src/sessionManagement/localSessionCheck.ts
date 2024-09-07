@@ -40,7 +40,7 @@ async function localSessionCheck(username: string, jwtToken: string, userAgent: 
         return { status: 400, message: "Session doesn't exist." };
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         // Returning a message with a link to raise a PR on GitHub in case of a server error
         return { message: "An unexpected error occurred. Please report this issue at https://github.com/Capta1nRaj/email-armor", status: 500 };
     }

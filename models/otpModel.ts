@@ -23,6 +23,6 @@ const OTPSchema = new mongoose.Schema({
     timestamps: true
 });
 
-OTPSchema.index({ userName: 1 }); // Creating an index on userName
+OTPSchema.index({ userName: 1 }, { unique: true }); // Creating an index on userName
 
 export default mongoose.models.OTP || mongoose.model("OTP", OTPSchema);
