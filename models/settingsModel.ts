@@ -14,38 +14,14 @@ const SettingsSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    signup_mail_title: {
-        type: String,
-        default: "Custom-Signup-Title"
-    },
-    signin_mail_title: {
-        type: String,
-        default: "Custom-Signin-Title"
-    },
     forgot_password_mail_title: {
         type: String,
         default: "Custom-Forgot-Password-Title"
-    },
-    add_a_user_mail_title: {
-        type: String,
-        default: "Add-A-User-Title"
-    },
-    change_password_mail_title: {
-        type: String,
-        default: "Change-Password-Title"
-    },
-    change_email_mail_title: {
-        type: String,
-        default: "Change-Email-Mail-Title"
     },
     email_template: {
         type: String,
         default: ""
     },
-    add_a_user_template: {
-        type: String,
-        default: ""
-    }
 }, {
     timestamps: true
 });

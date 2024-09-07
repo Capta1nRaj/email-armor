@@ -41,7 +41,7 @@ async function updatePassword(userEmail: string, userName: string, userAgent: st
     }
 
     try {
-        // Establish a connection to MongoDB
+        // Connecting to MongoDB
         await connect2MongoDB();
 
         // Look for the user by userName or userEmail in the database
