@@ -31,7 +31,7 @@ async function serverSessionCheck(username: string, id: string, jwtToken: string
         // Validate that session ID, JWT token, and username are provided
         if (!id || !jwtToken || !username) { return { status: 400, message: "Session doesn't exist." }; }
 
-        // Establish connection to MongoDB
+        // Connecting to MongoDB
         await connect2MongoDB();
 
         // Retrieve the session data from the database using the session ID, selecting userAgent and jwtToken

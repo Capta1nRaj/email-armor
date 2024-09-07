@@ -25,7 +25,7 @@ const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
 let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
 if (expireJwtToken === '0') { expireJwtToken = null }
 
-async function signin(userEmail: string, userName: string, userPassword: string | boolean, userAgent: string) {
+async function signIn(userEmail: string, userName: string, userPassword: string | boolean, userAgent: string) {
     try {
 
         // Checking if user is trying to hit the API with a software like Postman
@@ -100,4 +100,4 @@ async function signin(userEmail: string, userName: string, userPassword: string 
     }
 }
 
-export default signin;
+export default signIn;

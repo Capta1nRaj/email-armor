@@ -28,7 +28,7 @@ const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
 let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
 if (expireJwtToken === '0') { expireJwtToken = null }
 
-async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userRole: string) {
+async function signUp(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userRole: string) {
     // Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) { return { message: "Your device is unauthorized.", status: 401 }; }
 
@@ -150,4 +150,4 @@ async function generatingUserReferralCode() {
     return userReferralCode;
 }
 
-export default signup;
+export default signUp;

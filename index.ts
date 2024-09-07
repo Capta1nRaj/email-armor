@@ -1,45 +1,39 @@
-// User Auth imports
-import signup from "./src/userAuth/signup.js";
-import signin from "./src/userAuth/signin.js";
+// User Management imports
+import signUp from "./src/userManagement/signUp.js";
+import signIn from "./src/userManagement/signIn.js";
 
-// Session Check Imports
-import localSessionCheck from "./src/sessionCheck/localSessionCheck.js";
-import serverSessionCheck from "./src/sessionCheck/serverSessionCheck.js";
+// Session Validation Imports
+import localSessionCheck from "./src/sessionManagement/localSessionCheck.js";
+import serverSessionCheck from "./src/sessionManagement/serverSessionCheck.js";
 
-// Only for personal or high-end user (use this if making any admin panel type websites)
-import customAddAUser from './src/CustomUserCreation/customAddAUser.js'
-import customDeleteAUser from './src/CustomUserCreation/customDeleteAUser.js'
-
-// Logout
-import logoutOnce from "./src/LogoutSessions/logoutOnce.js";
-import logoutAll from "./src/LogoutSessions/logoutAll.js";
+// Logout User Imports
+import logoutOnce from "./src/logoutUser/logoutOnce.js";
+import logoutAll from "./src/logoutUser/logoutAll.js";
 
 // Basic Features
 import resendOTP from "./src/others/resendOTP.js";
-import forgotPassword from "./src/PasswordMangment/forgotPassword.js";
-import changePassword from "./src/PasswordMangment/changePassword.js"
+import forgotPassword from "./src/passwordManagement/forgotPassword.js";
+import changePassword from "./src/passwordManagement/changePassword.js"
 
 // Profile Pic Features
-import addUserProfilePic from './src/UserDataUpdate/ProfilePicUpdate/addUserProfilePic.js'
-import removeProfilePic from './src/UserDataUpdate/ProfilePicUpdate/removeProfilePic.js'
+import addUserProfilePic from './src/userDataManagement/ProfilePicUpdate/addUserProfilePic.js'
+import removeProfilePic from './src/userDataManagement/ProfilePicUpdate/removeProfilePic.js'
 
 // Username change
-import checkUniqueUsername from './src/UserDataUpdate/UsernameChange/checkUniqueUsername.js'
-import changeUsername from './src/UserDataUpdate/UsernameChange/changeUsername.js'
+import checkUniqueUsername from './src/userDataManagement/UsernameChange/checkUniqueUsername.js'
+import changeUsername from './src/userDataManagement/UsernameChange/changeUsername.js'
 
 // Useremail Change
-import checkUniqueEmail from './src/UserDataUpdate/UserEmailChange/checkUniqueEmail.js'
-import changeUserEmail from './src/UserDataUpdate/UserEmailChange/changeUserEmail.js'
+import checkUniqueEmail from './src/userDataManagement/UserEmailChange/checkUniqueEmail.js'
+import changeUserEmail from './src/userDataManagement/UserEmailChange/changeUserEmail.js'
 
 export {
-    signin,
-    signup,
+    signIn,
+    signUp,
     localSessionCheck,
     serverSessionCheck,
     resendOTP,
     forgotPassword,
-    customAddAUser,
-    customDeleteAUser,
     logoutOnce,
     logoutAll,
     changePassword,
