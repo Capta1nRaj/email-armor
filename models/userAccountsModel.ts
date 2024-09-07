@@ -14,6 +14,7 @@ const userAccountsSchema = new mongoose.Schema({
     userBanned: { type: Boolean, default: false },
     points: { type: Number, default: 0 },
     userRole: { type: String },
+    twoStepVerification: { type: Boolean, default: false }
 }, {
     timestamps: true
 });

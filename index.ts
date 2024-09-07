@@ -2,8 +2,7 @@
 import signup from "./src/signup/signup.js";
 
 // Sign-In User Imports
-import signIn from "./src/SignIn/signIn.js";
-import signInVerify from "./src/SignIn/signInVerify.js";
+import signin from "./src/signin/signin.js";
 
 // Session Check Imports
 import localSessionCheck from "./src/SessionCheck/localSessionCheck.js";
@@ -35,8 +34,7 @@ import checkUniqueEmail from './src/UserDataUpdate/UserEmailChange/checkUniqueEm
 import changeUserEmail from './src/UserDataUpdate/UserEmailChange/changeUserEmail.js'
 
 export {
-    signIn,
-    signInVerify,
+    signin,
     signup,
     localSessionCheck,
     serverSessionCheck,

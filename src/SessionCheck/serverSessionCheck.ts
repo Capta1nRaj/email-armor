@@ -13,7 +13,7 @@ function getEnvVariable(key: string): string {
 
 async function serverSessionCheck(username: string, id: string, jwtToken: string, userAgent: string) {
 
-    //! Checking if user is trying to hit the API with a software like Postman
+    // Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
     try {

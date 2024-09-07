@@ -19,7 +19,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 async function changePassword(userName: string, id: string, jwtToken: string, userAgent: string, userOTP: string, oldPassword: string, newPassword: string, userIP: string) {
     try {
 
-        //! Checking if user is trying to hit the API with a software like Postman
+        // Checking if user is trying to hit the API with a software like Postman
         if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
         //! Checking If userName Is Passed By Client Or Not

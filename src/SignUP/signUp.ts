@@ -8,7 +8,7 @@ import randomStringGenerator from "../utils/randomStringGenerator.js";
 import { config } from 'dotenv';
 config();
 
-//! Checking if BCRYPT_SALT_ROUNDS is a number or not
+// Checking if BCRYPT_SALT_ROUNDS is a number
 import bcrypt from 'bcrypt'
 let saltRounds: number;
 if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUNDS.length === 0 || (Number.isNaN(Number(process.env.BCRYPT_SALT_ROUNDS)))) {
@@ -29,8 +29,7 @@ let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
 if (expireJwtToken === '0') { expireJwtToken = null }
 
 async function signup(userFullName: string, userName: string, userEmail: string, userPassword: string, userReferredBy: string, userAgent: string, userRole: string) {
-
-    //! Checking if user is trying to hit the API with a software like Postman
+    // Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) { return { message: "Your device is unauthorized.", status: 401 }; }
 
     try {
@@ -53,29 +52,31 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // Connecting to MongoDB
         await connect2MongoDB();
 
-        // Validating if UserName & EmailId Already Exists In DB Or Not
+        // Validating if userName & emailId already exists
         const existingUser = await userAccountsModel.findOne({ $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }] }).select('userName userEmail');
 
-        // If User Exist, Notify The Client With The Following Message Depending On The Case
+        // If user exist, notify client with the following message as per the case
         if (existingUser) {
             let message = "";
             if (existingUser.userName === userName.toLowerCase()) { message += "Username already exists!"; return { message, status: 400 }; }
             if (existingUser.userEmail === userEmail.toLowerCase()) { message += "Email already exists!"; return { message, status: 400 }; }
         }
 
-        // Checking If User Entered A Referral Code Or Not
-        // If Entered, Check That It Exist Or Not
-        // If Not Entered, Set As ''
+        // Vaalidting referral code if porvided
+        // If no referral code, set as null
         const referredByUser = userReferredBy.length > 0 ? await userAccountsModel.findOne({ userReferralCode: userReferredBy }).select('_id') : '';
 
-        // If User Entered Wrong Referral Code, Return The Error
+        // If invalid referral code, throw error
         if (referredByUser === null) { return { message: "Wrong Referral Code!", status: 400 }; }
 
-        // Generating A Unique userReferralCode For The New User
+        // Generateing unique referral code
         const userReferralCode = await generatingUserReferralCode();
 
         // Hasing user password
         const hashingPassword = await bcrypt.hash(userPassword, saltRounds);
+
+        // Fetching the referring points values
+        const fetchSettings = await settingsModel.findOne({}).select('referred_person_points referred_points');
 
         // Save New User Details To DB
         const newUserID = await new userAccountsModel({
@@ -85,21 +86,13 @@ async function signup(userFullName: string, userName: string, userEmail: string,
             userPassword: hashingPassword,
             userReferralCode: userReferralCode,
             userReferredBy: referredByUser ? referredByUser._id : null,
+            points: referredByUser ? fetchSettings.referred_person_points : 0,
             userRole: userRole || ""
         }).save();
 
-        // If User Is Referred By Someone
+        // If user is referred by someone, then, give the points to the user who referred him
         if (newUserID.userReferredBy) {
-            // It Will Fetch Settings, & Get The Points Values From The DB
-            const fetchSettings = await settingsModel.findOne({}).select('referred_person_points referred_points');
-
-            // First, It Will Verify The User's Account And Assign Them The Referral Points (REFERRED_PERSON_POINTS as per JSON File)
-            //! Guy got referred 
-            await userAccountsModel.updateOne({ userName: userName.toLowerCase() }, { $inc: { points: fetchSettings.referred_person_points } });
-
-            // Secondly, It Will Update The Points For The User (REFERRED_POINTS As Per JSON File) Who Referred Them And Add The User's userName To The Referrer's List
-            // It Will User The Referral Code To Find The User Who Referred A New User
-            //!  Guy who referred
+            //!  Referral guy
             const guyWhoReferred = await userAccountsModel.findOneAndUpdate(
                 { _id: newUserID.userReferredBy },
                 { $addToSet: { userReferrals: newUserID._id }, $inc: { points: fetchSettings.referred_points } },
@@ -118,10 +111,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         const hashingUserAgent = await bcrypt.hash(userAgent, saltRounds)
 
         // JWT Token data
-        const jwtData = {
-            userName: userName.toLowerCase(),
-            userAgent: hashingUserAgent
-        }
+        const jwtData = { userName: userName.toLowerCase(), userAgent: hashingUserAgent }
 
         // Signing JWT Token with jwtTokenValue & expiry date
         const signOptions = expireJwtToken ? { expiresIn: expireJwtToken } : undefined;
@@ -130,7 +120,7 @@ async function signup(userFullName: string, userName: string, userEmail: string,
         // Encrypting jwtToken
         const hashingJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
 
-        // Store a session model to DB, & it will expire after 1 year
+        // Storing the session model in the DB with an expiration set to 1 year from now
         const sessionID = await new sessionsModel({
             userName: newUserID._id,
             userAgent: userAgent,

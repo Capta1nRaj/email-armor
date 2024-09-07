@@ -5,7 +5,7 @@ import localSessionCheck from "../../SessionCheck/localSessionCheck.js";
 async function addUserProfilePic(userName: string, jwtToken: string, userAgent: string, imageLink: string) {
     try {
 
-        //! Checking if user is trying to hit the API with a software like Postman
+        // Checking if user is trying to hit the API with a software like Postman
         if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
         //! Checking If userName Is Passed By Client Or Not

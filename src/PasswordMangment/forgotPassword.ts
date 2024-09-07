@@ -17,7 +17,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 
 async function forgotPassword(username: string, userAgent: string, OTP: string, newPassword: string, userIP: string) {
 
-    //! Checking if user is trying to hit the API with a software like Postman
+    // Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
     try {

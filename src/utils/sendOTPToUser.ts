@@ -30,7 +30,7 @@ async function sendOTPToUser(username: string, userEmail: string, OTPOrPassword:
     throw new Error("Missing environment variables: NODEMAILER_USERNAME, NODEMAILER_PASSWORD, NODEMAILER_MAIL_FROM");
   }
 
-  //! Checking if user is trying to hit the API with a software like Postman
+  // Checking if user is trying to hit the API with a software like Postman
   if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
   // Connection to MongoDB

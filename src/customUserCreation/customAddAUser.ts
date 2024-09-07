@@ -21,7 +21,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 //! Here adminName means the user trying to add an employee, & the name will be saved in userReferredBy
 async function customAddAUser(adminName: string, userFullName: string, userName: string, userEmail: string, userRole: string, userBankName: string, userIFSCCode: string, userAccountNumber: string, uniqueIdentifiers: string[], userAgent: string, userIP: string) {
 
-    //! Checking if user is trying to hit the API with a software like Postman
+    // Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
         return {
             status: 401,

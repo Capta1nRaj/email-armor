@@ -1,14 +1,10 @@
+// Basic imports
+import { connect2MongoDB } from "connect2mongodb";
+import sessionsModel from "../../models/sessionsModel.js";
 import { config } from 'dotenv';
 config();
 
-import { connect2MongoDB } from "connect2mongodb";
-import otpModel from "../../models/otpModel.js";
-import sessionsModel from "../../models/sessionsModel.js";
-import randomStringGenerator from "../utils/randomStringGenerator.js";
-import sendOTPToUser from "../utils/sendOTPToUser.js";
-import settingsModel from "../../models/settingsModel.js";
-
-//! Checking if BCRYPT_SALT_ROUNDS is a number or not
+// Checking if BCRYPT_SALT_ROUNDS is a number or not
 import bcrypt from 'bcrypt'
 import userAccountsModel from '../../models/userAccountsModel.js';
 let saltRounds: number;
@@ -18,114 +14,89 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
     saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS);
 }
 
-async function signIn(username: string, userPassword: string | boolean, userAgent: string, userIP: string) {
+// Retrieving jwt environment variables
+import jwt from 'jsonwebtoken';
+function getEnvVariable(key: string): string {
+    const value = process.env[key];
+    if (value === undefined || value.length === 0) { throw new Error(`${key} is undefined.`); }
+    return value;
+}
+const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
+let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
+if (expireJwtToken === '0') { expireJwtToken = null }
 
-    //! Checking if user is trying to hit the API with a software like Postman
-    if (!userAgent) {
-        return {
-            status: 401,
-            message: "Your device is unauthorized."
-        };
-    }
+async function signin(userEmail: string, userName: string, userPassword: string | boolean, userAgent: string) {
+    try {
 
-    await connect2MongoDB();
+        // Checking if user is trying to hit the API with a software like Postman
+        if (!userAgent) { return { message: "Your device is unauthorized.", status: 401 }; }
 
-    // Finding If User Exist Or Not From DB
-    const findUserToLogin = await userAccountsModel.findOne({ userName: username.toLowerCase() }).select('userVerified userName userEmail userPassword');
+        if (!userName && !userEmail) { return { message: "Either userName or userEmail must be provided!", status: 400 }; }
 
-    // If userName Don't Exist, Return A Bad Request
-    if (!findUserToLogin) {
-        return {
-            status: 400,
-            message: "Please Validate Your Details.",
-        };
-    }
-
-    // If User Is Verified, Then, Decrypt The User Password
-    const decryptedPassword = await bcrypt.compare(userPassword as string, findUserToLogin.userPassword)
-
-    // If incorrect password, Return A Bad Request
-    if (!decryptedPassword) { return { status: 400, message: "Please Validate Your Details.", }; }
-
-    // If User Is Not Verified, Redirect User To SignUp Page, & Ask Them To Verify First
-    if (!findUserToLogin.userVerified) {
-
-        // Generating OTP
-        const userOTP = await randomStringGenerator(6);
-
-        // Encrypting OTP
-        const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
-
-        // Checking If OTP Already Exist In DB Or Not
-        const checkIfOTPExistOrNot = await otpModel.findOne({ userName: username.toLowerCase() }).select('OTPCount');
-
-        // If OTP Not Exist, Then, Create A New Doc & Save To DB
-        if (!checkIfOTPExistOrNot) {
-
-            await new otpModel({
-                userName: username.toLowerCase(),
-                OTP: encryptedOTP,
-            }).save();
-
-            // If OTP Exist, Then, Find & Update The Doc & Save To DB
-        } else {
-
-            // Check If OTP Limit Is Exceeded Or Not
-            // If Exceeded Then Don't Generate More OTP
-
-            // It Will Fetch Settings, & Get The OTP Limits Values From The DB
-            const fetchSettings = await settingsModel.findOne({}).select('otp_limits');
-            if (checkIfOTPExistOrNot.OTPCount >= fetchSettings.otp_limits) {
-                return {
-                    status: 403,
-                    message: "Max OTP Limit Reached, Please Try After 10 Minutes."
-                };
-            }
-
-            // If Not Exceeded Then Generate New OTP & Increase OTPCount By 1
-            await otpModel.updateOne({ userName: username.toLowerCase() }, { $inc: { OTPCount: 1 }, OTP: encryptedOTP }, { new: true });
-
+        // Validating userName format if exist
+        if (userName) {
+            const regexForuserName = /^[a-zA-Z0-9_]+$/;
+            if (!regexForuserName.test(userName)) { return { message: "Invalid userName!", status: 400 }; }
         }
 
-        // Sending OTP To User Registered E-Mail
-        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signUp', userIP, userAgent);
+        // Validating userEmail address format if exist
+        if (userEmail) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userEmail)) { return { message: "Invalid Email!", status: 400 }; }
+        }
 
-        return {
-            status: 401,
-            message: "Please Verify Your Account",
-            userName: username.toLowerCase(),
-        };
-    }
+        // Connecting to MongoDB
+        await connect2MongoDB();
 
-    // Checking If userName & userPassword Are The Same As Per The Client Entered
-    if (findUserToLogin.userName === username.toLowerCase() && decryptedPassword) {
+        // Validating if user exist
+        const findUserToLogin = await userAccountsModel.findOne({
+            $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail }]
+        }).select('_id userVerified userName userEmail userPassword');
 
-        // Generating OTP
-        const userOTP = await randomStringGenerator(6);
+        // If user not found, throw error
+        if (!findUserToLogin) { return { message: "Please Validate Your Details.", status: 400 }; }
 
-        // Encrypting User OTP
-        const encryptedOTP = await bcrypt.hash(userOTP, saltRounds);
+        // Validating password
+        const decryptedPassword = await bcrypt.compare(userPassword as string, findUserToLogin.userPassword)
 
-        // Saving Session To DB
-        const savedData = await new sessionsModel({
-            userName: findUserToLogin._id,
-            OTP: encryptedOTP,
-            userAgent: userAgent
-        }).save();
+        // If incorrect password, throw error
+        if (!decryptedPassword) { return { message: "Please Validate Your Details.", status: 400 }; }
 
-        // Sending OTP To User Registered E-Mail
-        await sendOTPToUser(username.toLowerCase(), findUserToLogin.userEmail, userOTP, 'signIn', userIP, userAgent);
+        const validatUserName = findUserToLogin.userName === userName.toLowerCase();
+        const validateUserEmail = findUserToLogin.userEmail === userEmail;
+        // Verifying if the provided userName and userPassword match the clients input
+        if ((validatUserName || validateUserEmail) && decryptedPassword) {
 
-        return {
-            status: 201,
-            message: "Sign In Successful, OTP Sent To Mail",
-            userName: username.toLowerCase(),
-            id: savedData.id
-        };
+            // Hasing userAgent
+            const hashingUserAgent = await bcrypt.hash(userAgent, saltRounds)
 
-    } else {
-        return { status: 400, message: "Please Validate Your Details.", };
+            // JWT Token data
+            const jwtData = { userName: userName.toLowerCase(), userAgent: hashingUserAgent }
+
+            // Signing JWT Token with jwtTokenValue & expiry date
+            const signOptions = expireJwtToken ? { expiresIn: expireJwtToken } : undefined;
+            const signedJWTToken = jwt.sign(jwtData, jwtTokenValue, signOptions);
+
+            // Encrypting jwtToken
+            const hashingJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
+
+            // Storing the session model in the DB with an expiration set to 1 year from now
+            const sessionID = await new sessionsModel({
+                userName: findUserToLogin._id,
+                userAgent: userAgent,
+                jwtToken: hashingJWTToken,
+                expireAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+            }).save();
+
+            return { id: sessionID._id, userName: findUserToLogin.userName.toLowerCase(), signedJWTToken: signedJWTToken, message: "Login Successful!", status: 202 };
+
+        } else {
+            return { message: "Please Validate Your Details.", status: 400 };
+        }
+    } catch (error) {
+        console.log(error)
+        return { message: "Internal Server Error!", status: 500 };
     }
 }
 
-export default signIn;
+export default signin;

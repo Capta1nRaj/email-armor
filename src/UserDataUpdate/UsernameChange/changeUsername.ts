@@ -5,7 +5,7 @@ import sessionsModel from "../../../models/sessionsModel.js";
 
 async function changeUsername(oldUsername: string, newUsername: string, id: string, jwtToken: string, userAgent: string) {
     try {
-        //! Checking if user is trying to hit the API with a software like Postman
+        // Checking if user is trying to hit the API with a software like Postman
         if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
 
         //! Checking If oldUsername, & other data is passed By Client Or Not

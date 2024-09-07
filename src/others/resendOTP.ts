@@ -21,7 +21,7 @@ if (process.env.BCRYPT_SALT_ROUNDS === undefined || process.env.BCRYPT_SALT_ROUN
 
 async function resendOTP(username: string, functionPerformed: string, userAgent: string, id: string, userIP: string) {
 
-    //! Checking if user is trying to hit the API with a software like Postman
+    // Checking if user is trying to hit the API with a software like Postman
     if (!userAgent) {
         return {
             status: 401,
