@@ -25,16 +25,10 @@ async function forgotPassword(userEmail: string, userName: string, userAgent: st
     if (!userName && !userEmail) { return { message: "Either userName or userEmail must be provided!", status: 400 }; }
 
     // Validating userName format if exist
-    if (userName) {
-        const regexForuserName = /^[a-zA-Z0-9_]+$/;
-        if (!regexForuserName.test(userName)) { return { message: "Invalid userName!", status: 400 }; }
-    }
+    if (userName) { const regexForuserName = /^[a-zA-Z0-9_]+$/; if (!regexForuserName.test(userName)) { return { message: "Invalid userName!", status: 400 }; } }
 
     // Validating userEmail address format if exist
-    if (userEmail) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(userEmail)) { return { message: "Invalid Email!", status: 400 }; }
-    }
+    if (userEmail) { const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; if (!emailRegex.test(userEmail)) { return { message: "Invalid Email!", status: 400 }; } }
 
     try {
 
@@ -66,9 +60,7 @@ async function forgotPassword(userEmail: string, userName: string, userAgent: st
         ).select('OTPCount');
 
         // Checking if OTP request limit exceeded or not
-        if (otpData.OTPCount > fetchSettings.otp_limits) {
-            return { message: "OTP request limit exceeded. Please try again later.", status: 429 };
-        }
+        if (otpData.OTPCount >= fetchSettings.otp_limits) { return { message: "OTP request limit exceeded. Please try again later.", status: 429 }; }
 
         const emailHTMLTemplate = fetchSettings.email_template
             .replaceAll('{{userName}}', findUserToLogin.userName.toLowerCase())

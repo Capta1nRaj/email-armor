@@ -2,6 +2,14 @@ import mongoose from "mongoose";
 mongoose.set('autoCreate', false);
 
 const SettingsSchema = new mongoose.Schema({
+    sign_in_mail_title: {
+        type: String,
+        default: "Custom-Sign-In-Title"
+    },
+    forgot_password_mail_title: {
+        type: String,
+        default: "Custom-Forgot-Password-Title"
+    },
     referred_points: {
         type: Number,
         default: 0,
@@ -13,10 +21,6 @@ const SettingsSchema = new mongoose.Schema({
     otp_limits: {
         type: Number,
         default: 0,
-    },
-    forgot_password_mail_title: {
-        type: String,
-        default: "Custom-Forgot-Password-Title"
     },
     email_template: {
         type: String,

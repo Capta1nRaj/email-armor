@@ -27,18 +27,10 @@ async function updatePassword(userEmail: string, userName: string, userAgent: st
     if (!newPassword) { return { message: "New password is required!", status: 400 }; }
 
     // Validate userName format if provided
-    if (userName) {
-        if (!/^[a-zA-Z0-9_]+$/.test(userName)) {
-            return { message: "Invalid userName!", status: 400 };
-        }
-    }
+    if (userName) { if (!/^[a-zA-Z0-9_]+$/.test(userName)) { return { message: "Invalid userName!", status: 400 }; } }
 
     // Validate userEmail format if provided
-    if (userEmail) {
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
-            return { message: "Invalid Email!", status: 400 };
-        }
-    }
+    if (userEmail) { if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) { return { message: "Invalid Email!", status: 400 }; } }
 
     try {
         // Connecting to MongoDB

@@ -8,20 +8,20 @@ const SessionsSchema = new mongoose.Schema({
     },
     jwtToken: {
         type: String,
+        default: ''
     },
     userAgent: {
         type: String,
         required: true
     },
     userRole: {
-        type: String,
+        type: String
     },
     OTP: {
         type: String
     },
     OTPCount: {
-        type: Number,
-        default: 0,
+        type: Number
     },
     expireAt: {
         type: Date,

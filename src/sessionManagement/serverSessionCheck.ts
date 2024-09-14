@@ -25,11 +25,11 @@ interface JWTTokenData {
 async function serverSessionCheck(username: string, id: string, jwtToken: string, userAgent: string) {
 
     // Ensure the request comes from an authorized device (not tools like Postman)
-    if (!userAgent) { return { status: 401, message: "Your device is unauthorized." }; }
+    if (!userAgent) { return { message: "Your device is unauthorized.", status: 401 }; }
 
     try {
         // Validate that session ID, JWT token, and username are provided
-        if (!id || !jwtToken || !username) { return { status: 400, message: "Session doesn't exist." }; }
+        if (!id || !jwtToken || !username) { return { message: "Session doesn't exist.", status: 400 } }
 
         // Connecting to MongoDB
         await connect2MongoDB();
@@ -38,7 +38,7 @@ async function serverSessionCheck(username: string, id: string, jwtToken: string
         const findSessionById = await sessionsModel.findById(id).select('userAgent jwtToken');
 
         // If no session is found, return an error indicating session doesn't exist
-        if (!findSessionById) return { status: 400, message: "Session doesn't exist." };
+        if (!findSessionById) return { message: "Session doesn't exist.", status: 400 };
 
         // Decode and verify the JWT token using the secret key
         const decryptingJWTTokenData = jwt.verify(jwtToken, jwtTokenValue) as JWTTokenData;
@@ -51,11 +51,11 @@ async function serverSessionCheck(username: string, id: string, jwtToken: string
 
         // If JWT token and user agent are valid, confirm session exists
         if (checkIfJWTTokenValid && checkIfUserAgentValid && decryptingJWTTokenData) {
-            return { status: 202, message: "Session exists.", userName: username.toLowerCase() };
+            return { message: "Session exists.", userName: username.toLowerCase(), status: 202 };
         }
 
         // If validation fails, return an error indicating session doesn't exist
-        return { status: 400, message: "Session doesn't exist." };
+        return { message: "Session doesn't exist.", status: 400 };
 
     } catch (error) {
         console.error(error);

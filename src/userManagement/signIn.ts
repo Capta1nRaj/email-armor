@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userAccountsModel from '../../models/userAccountsModel.js';
 import { config } from 'dotenv';
+import { sendSignInOTP } from "./utils/sendSignInOTP.js";
 config();
 
 // Checking if BCRYPT_SALT_ROUNDS is a number or not
@@ -25,7 +26,7 @@ const jwtTokenValue = getEnvVariable('JWT_TOKEN_VALUE');
 let expireJwtToken: string | null = getEnvVariable('EXPIRE_JWT_TOKEN');
 if (expireJwtToken === '0') { expireJwtToken = null }
 
-async function signIn(userEmail: string, userName: string, userPassword: string | boolean, userAgent: string) {
+async function signIn(userEmail: string, userName: string, userPassword: string | boolean, userAgent: string, userIP: string) {
     try {
 
         // Checking if user is trying to hit the API with a software like Postman
@@ -52,7 +53,7 @@ async function signIn(userEmail: string, userName: string, userPassword: string 
         // Validating if user exist
         const findUserToLogin = await userAccountsModel.findOne({
             $or: [{ userName: userName.toLowerCase() }, { userEmail: userEmail.toLowerCase() }]
-        }).select('_id userVerified userName userEmail userPassword');
+        }).select('_id userVerified userName userEmail userPassword twoStepVerification');
 
         // If user not found, throw error
         if (!findUserToLogin) { return { message: "Please Validate Your Details.", status: 400 }; }
@@ -68,29 +69,46 @@ async function signIn(userEmail: string, userName: string, userPassword: string 
         // Verifying if the provided userName and userPassword match the clients input
         if ((validatUserName || validateUserEmail) && decryptedPassword) {
 
-            // Hasing userAgent
-            const hashingUserAgent = await bcrypt.hash(userAgent, saltRounds)
+            // If twoStepVerification is enabled, then, send an email
+            // else login directly
+            if (findUserToLogin.twoStepVerification) {
 
-            // JWT Token data
-            const jwtData = { userName: userName.toLowerCase(), userAgent: hashingUserAgent }
+                // Sending OTP mail to user, & getting hashed OTP in return to store in DB
+                const hashingOTP = await sendSignInOTP(findUserToLogin.userEmail, findUserToLogin.userName, userIP, userAgent);
 
-            // Signing JWT Token with jwtTokenValue & expiry date
-            const signOptions = expireJwtToken ? { expiresIn: expireJwtToken } : undefined;
-            const signedJWTToken = jwt.sign(jwtData, jwtTokenValue, signOptions);
+                // Saving session in DB
+                const sessionID = await new sessionsModel({
+                    userName: findUserToLogin._id,
+                    userAgent: userAgent,
+                    OTP: hashingOTP,
+                    OTPCount: 0
+                }).save();
 
-            // Encrypting jwtToken
-            const hashingJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
+                return { id: sessionID._id, userName: findUserToLogin.userName.toLowerCase(), message: "OTP has been sent to your email!", status: 201 };
+            } else {
+                // Hasing userAgent
+                const hashingUserAgent = await bcrypt.hash(userAgent, saltRounds)
 
-            // Storing the session model in the DB with an expiration set to 1 year from now
-            const sessionID = await new sessionsModel({
-                userName: findUserToLogin._id,
-                userAgent: userAgent,
-                jwtToken: hashingJWTToken,
-                expireAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-            }).save();
+                // JWT Token data
+                const jwtData = { userName: findUserToLogin.userName.toLowerCase(), userAgent: hashingUserAgent }
 
-            return { id: sessionID._id, userName: findUserToLogin.userName.toLowerCase(), signedJWTToken: signedJWTToken, message: "Login Successful!", status: 202 };
+                // Signing JWT Token with jwtTokenValue & expiry date
+                const signOptions = expireJwtToken ? { expiresIn: expireJwtToken } : undefined;
+                const signedJWTToken = jwt.sign(jwtData, jwtTokenValue, signOptions);
 
+                // Encrypting jwtToken
+                const hashingJWTToken = await bcrypt.hash(signedJWTToken, saltRounds)
+
+                // Storing the session model in the DB with an expiration set to 1 year from now
+                const sessionID = await new sessionsModel({
+                    userName: findUserToLogin._id,
+                    userAgent: userAgent,
+                    jwtToken: hashingJWTToken,
+                    expireAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                }).save();
+
+                return { id: sessionID._id, userName: findUserToLogin.userName.toLowerCase(), signedJWTToken: signedJWTToken, message: "Login Successful!", status: 202 };
+            }
         } else {
             return { message: "Please Validate Your Details.", status: 400 };
         }

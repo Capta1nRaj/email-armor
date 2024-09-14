@@ -17,6 +17,7 @@ async function generateJSONFile() {
         const emailArmorJSONFileExists = fs.existsSync('email-armor.json');
         if (!emailArmorJSONFileExists) {
             const jsonTemplate = {
+                "SIGN_IN_MAIL_TITLE": "Custom-Sign-In-Title",
                 "FORGOT_PASSWORD_MAIL_TITLE": "Custom-Forgot-Password-Title",
                 "REFERRED_POINTS": 100,
                 "REFERRED_PERSON_POINTS": 25,
@@ -26,6 +27,7 @@ async function generateJSONFile() {
 
             // Save the initial settings to MongoDB
             await new settingsModel({
+                sign_in_mail_title: jsonTemplate.SIGN_IN_MAIL_TITLE,
                 forgot_password_mail_title: jsonTemplate.FORGOT_PASSWORD_MAIL_TITLE,
                 referred_points: jsonTemplate.REFERRED_POINTS,
                 referred_person_points: jsonTemplate.REFERRED_PERSON_POINTS,

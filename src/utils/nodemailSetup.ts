@@ -15,7 +15,7 @@ const auth = nodemailer.createTransport({
 
 
 //! Send email to the user
-export default async function nodemailSetup(data: any) {
+async function nodemailSetup(data: any) {
 
     //! Sending the mail to the user
     const receiver = {
@@ -34,3 +34,5 @@ export default async function nodemailSetup(data: any) {
         throw error;
     }
 }
+
+export default nodemailSetup;

@@ -1,6 +1,6 @@
 {
   "name": "email-armor",
-  "version": "0.0.94-beta.0",
+  "version": "0.0.98-beta.0",
   "description": "Custom email and password authentication with two-step verification via Nodemailer.",
   "main": "lib/index.js",
   "type": "module",
