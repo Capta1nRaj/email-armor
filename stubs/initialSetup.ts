@@ -25,14 +25,18 @@ async function generateJSONFile() {
                 "SETUP_DONE": false
             };
 
-            // Save the initial settings to MongoDB
-            await new settingsModel({
-                sign_in_mail_title: jsonTemplate.SIGN_IN_MAIL_TITLE,
-                forgot_password_mail_title: jsonTemplate.FORGOT_PASSWORD_MAIL_TITLE,
-                referred_points: jsonTemplate.REFERRED_POINTS,
-                referred_person_points: jsonTemplate.REFERRED_PERSON_POINTS,
-                otp_limits: jsonTemplate.OTP_LIMITS,
-            }).save();
+            // Validating that if settings exist or not
+            const isSettingsExist = await settingsModel.findOne({});
+            if (!isSettingsExist) {
+                // Save the initial settings to MongoDB
+                await new settingsModel({
+                    sign_in_mail_title: jsonTemplate.SIGN_IN_MAIL_TITLE,
+                    forgot_password_mail_title: jsonTemplate.FORGOT_PASSWORD_MAIL_TITLE,
+                    referred_points: jsonTemplate.REFERRED_POINTS,
+                    referred_person_points: jsonTemplate.REFERRED_PERSON_POINTS,
+                    otp_limits: jsonTemplate.OTP_LIMITS,
+                }).save();
+            }
 
             // Generate the 'email-armor.json' file
             await generateFileIfNotExists('email-armor.json', JSON.stringify(jsonTemplate, null, 2));
@@ -88,7 +92,7 @@ async function generateSchemaFiles() {
 // Function to update the database with settings from the JSON file and email template
 async function updateData() {
     // Destructure the necessary fields from the JSON file
-    const { REFERRED_POINTS, REFERRED_PERSON_POINTS, OTP_LIMITS, FORGOT_PASSWORD_MAIL_TITLE } = JSON.parse(fs.readFileSync('email-armor.json', 'utf8'));
+    const { SIGN_IN_MAIL_TITLE, REFERRED_POINTS, REFERRED_PERSON_POINTS, OTP_LIMITS, FORGOT_PASSWORD_MAIL_TITLE } = JSON.parse(fs.readFileSync('email-armor.json', 'utf8'));
 
     // Read the HTML email template file from the local file system
     const userEmailTemplate = fs.readFileSync('email-template.html', 'utf8');
@@ -97,6 +101,7 @@ async function updateData() {
     await settingsModel.updateOne({},  // Empty filter to target the only document in the collection
         {
             $set: {
+                sign_in_mail_title: SIGN_IN_MAIL_TITLE,
                 referred_points: REFERRED_POINTS,
                 referred_person_points: REFERRED_PERSON_POINTS,
                 otp_limits: OTP_LIMITS,

@@ -56,7 +56,7 @@ async function signInVerify(id: string, otp: string, userAgent: string, method: 
             await sessionsModel.updateOne({ _id: id }, { $set: { OTP: hashingOTP }, $inc: { OTPCount: 1 } });
 
             // Return success message
-            return { message: "OTP has been resent to your email!", status: 200 };
+            return { signedJWTToken: "", message: "OTP has been resent to your email!", status: 200 };
 
         } else if (method === 'verify') {
             // Verify OTP and userAgent
@@ -91,6 +91,8 @@ async function signInVerify(id: string, otp: string, userAgent: string, method: 
                 return { message: "Invalid OTP!", status: 400 };
             }
         }
+
+        return { signedJWTToken: "", message: "Invalid request method!", status: 400 };
 
     } catch (error) {
         console.error(error);

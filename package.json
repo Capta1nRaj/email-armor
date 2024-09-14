@@ -1,6 +1,6 @@
 {
   "name": "email-armor",
-  "version": "0.0.98-beta.0",
+  "version": "1.0.0",
   "description": "Custom email and password authentication with two-step verification via Nodemailer.",
   "main": "lib/index.js",
   "type": "module",
@@ -15,7 +15,14 @@
     "publishBeta": "npm run build && npm publish --tag beta",
     "readme": "git add . && git commit -m \"README.md updated\" && git push",
     "link": "npm run build && cd ./test && npm link email-armor",
-    "npx": "npm run build && cd ./test && npx email-armor init"
+    "npx": "npm run build && cd ./test && npx email-armor init",
+    "unpublish": "npm unpublish email-armor@0.1.0-beta.0",
+    "devSync": "git checkout v1.0.0 && git reset --hard origin/main && git push --force && git pull origin main && git push",
+    "mainSync": "git checkout main && git pull origin v1.0.0 && git push && git checkout v1.0.0",
+    "devSoftReset": "git checkout v1.0.0 && git reset --soft HEAD~2 && git commit -m \"Final release of v1.0.0 with complete features and fixes\" && git push --force",
+    "mainSoftReset": "git checkout main && git reset --soft HEAD~2 && git commit -m \"MicrosoftClarity code updated\" && git push --force && git checkout v1.0.0 && git reset --hard origin/main && git push --force",
+    "devHardReset": "git checkout v1.0.0 && git reset --hard origin/main && git push --force && git pull origin main && git push",
+    "mainHardReset": "git checkout main && git reset --hard origin/v1.0.0 && git push --force && git checkout v1.0.0"
   },
   "repository": {
     "type": "git",
